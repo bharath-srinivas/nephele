@@ -15,12 +15,12 @@ On Linux run the following command to install aws-go:
 curl -sL https://raw.githubusercontent.com/bharath-srinivas/aws-go/master/setup_aws_go | sudo sh
 ```
 
-### AWS credentials
+## AWS credentials
 
 AWS Go requires AWS Credentials to perform operations and to manage resources. You can provide your credentials
 to AWS Go and manage them by using the `env` command.
 
-#### Managing environments
+### Managing environments
 
 You can manage your environment profiles and create new profiles with the `env` command. It stores your config
 so that you can transition between different profiles seamlessly without the need to enter your credentials
@@ -46,7 +46,7 @@ $ aws-go env use --profile staging --region eu-west-1
 In both the above commands, the `--region` flag is `optional` and the default value will be `us-east-1` if the value
 for the flag is not provided. 
 
-#### Listing profiles
+### Listing profiles
 
 For listing all the stored profiles:
 
@@ -54,7 +54,7 @@ For listing all the stored profiles:
 $ aws-go env --list
 ```
 
-#### Deleting profile
+### Deleting profile
 
 For deleting a profile:
 
@@ -105,7 +105,7 @@ For Lambda:
 }
 ```
 
-### IAM policy for starting and stopping instances
+#### IAM policy for starting and stopping instances
 
 The following additional IAM policy is needed to start and stop the EC2 instances using aws-go.
 
@@ -122,7 +122,7 @@ The following additional IAM policy is needed to start and stop the EC2 instance
 }
 ```
 
-### IAM policy for invoking Lambda functions
+#### IAM policy for invoking Lambda functions
 
 The following additional IAM policy is required to invoke Lambda functions using aws-go.
 
