@@ -153,7 +153,7 @@ for more information on how to set the required policies.
 
 ## Getting started
 
-**Note:** Before using aws-go, [AWS credentials](#AWS credentials) are required for using the CLI.
+**Note:** Before using aws-go, [AWS credentials](#aws-credentials) are required for using the CLI.
 
 ### Listing EC2 instances
 
