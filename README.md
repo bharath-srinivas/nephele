@@ -12,7 +12,7 @@ architectures will be added later once the tool is stable.
 On Linux run the following command to install aws-go:
 
 ```
-curl -sL https://raw.githubusercontent.com/bharath-srinivas/aws-go/master/setup_aws_go | sudo sh
+curl -sL https://raw.githubusercontent.com/bharath-srinivas/aws-go/master/setup_aws_go | sudo bash
 ```
 
 ## AWS credentials
