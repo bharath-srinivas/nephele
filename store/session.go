@@ -24,7 +24,7 @@ func newDBSession() *sqlx.DB {
 		}
 	}
 
-	configFileName := "aws_go_credentials.sqlite3"
+	configFileName := "aws_go.credentials"
 	configFile := path.Join(configPath, configFileName)
 
 	db := sqlx.MustConnect("sqlite3", configFile)
