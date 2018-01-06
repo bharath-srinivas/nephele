@@ -1,5 +1,5 @@
 # AWS Go
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)]( aws-go/LICENSE )
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 AWS Go is a CLI tool for managing [AWS](https://aws.amazon.com) services without the need
 to login to the AWS console, built to be fast and easy to use. Currently AWS Go supports services like
