@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"utils"
+	"aws-go/utils"
 )
 
 var upgradeCmd = &cobra.Command{

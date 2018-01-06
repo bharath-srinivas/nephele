@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"store"
+	"aws-go/store"
 )
 
 var listEnv bool

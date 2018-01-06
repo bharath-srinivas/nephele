@@ -14,8 +14,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/lambda"
 	"github.com/aws/aws-sdk-go/service/rds"
-	"store"
-	"utils"
+	"aws-go/store"
+	"aws-go/utils"
 )
 
 func initiateSession() (*session.Session) {
