@@ -4,9 +4,9 @@
 #
 # Run as root or insert `sudo -E` before `bash`:
 #
-# curl -sL https://gitlab.com/bharath192/aws-go/raw/master/setup_aws_go | bash -
+# curl -sL https://raw.githubusercontent.com/bharath-srinivas/aws-go/master/setup_aws_go | bash -
 # or
-# wget -qO- https://gitlab.com/bharath192/aws-go/raw/master/setup_aws_go | bash -
+# wget -qO- https://raw.githubusercontent.com/bharath-srinivas/aws-go/master/setup_aws_go | bash -
 #
 
 export DEBIAN_FRONTEND=noninteractive
@@ -41,6 +41,7 @@ if test -t 1; then # if terminal
 fi
 
 bail() {
+    echo
     echo 'Error executing command, exiting'
     exit 1
 }
@@ -55,7 +56,7 @@ exec_cmd() {
 }
 
 setup() {
-	print_status "Installing ${PKG_NAME} now..."
+	print_status "Installing ${PKG_NAME} now"
 
 	PRE_INSTALL_PKGS=""
 
@@ -69,7 +70,7 @@ setup() {
 	
 	# Install the necessary packages needed for performing the installation operation
 	if [ "${PRE_INSTALL_PKGS}" != "" ]; then
-    	print_status "Installing packages required for setup:${PRE_INSTALL_PKGS}..."
+    	print_status "Installing packages required for setup:${PRE_INSTALL_PKGS}"
     	exec_cmd "apt-get install -y${PRE_INSTALL_PKGS} > /dev/null 2>&1"
 	fi
 
@@ -81,9 +82,14 @@ setup() {
 	    if [ "$OS_ARCH" == "x86_64" ]; then
             PLATFORM="linux_amd64"
 	    else
-		    echo "Your system architecture: ${OS_ARCH}, is not supported. Exiting now..."
+	        echo
+		    echo "Your system architecture: ${OS_ARCH}, is not supported. Exiting now"
 		    exit 1
 		fi
+	else
+	    echo
+	    echo "Your system OS: ${OS}, is not supported. Exiting now"
+	    exit 1
 	fi
 
     # Get the latest release from the repository
@@ -91,12 +97,13 @@ setup() {
     URL="https://github.com/bharath-srinivas/aws-go/releases/download/$LATEST/aws_go_$PLATFORM"
 
 	if [ -z "$LATEST" ]; then
+	    echo
 	    echo "Error requesting binary file. Exiting now..."
 	    exit 1
 	else
 		print_status "Downloading ${PKG_NAME} binary onto your system. Please wait..."
 		if [ -x /usr/bin/curl ]; then
-			exec_cmd "curl -sLf -o ${DEST_PATH}/${PKG_NAME} ${URL}"
+			exec_cmd "curl -#Lf -o ${DEST_PATH}/${PKG_NAME} ${URL}"
 			exec_cmd "curl -sLf -o ${BASH_COMPLETION_PATH}/${BASH_COMPLETION_FILE} https://raw.githubusercontent.com/bharath-srinivas/aws-go/master/${BASH_COMPLETION_FILE}"
 		else
 			exec_cmd "wget -q -P ${DEST_PATH} ${URL}"
