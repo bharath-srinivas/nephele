@@ -3,17 +3,19 @@ package function
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"text/tabwriter"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/lambda"
-	"github.com/aws/aws-sdk-go/aws/awserr"
-	"store"
-	"utils"
+	"github.com/aws/aws-sdk-go/service/rds"
+	"aws-go/store"
+	"aws-go/utils"
 )
 
 func initiateSession() (*session.Session) {
@@ -30,14 +32,28 @@ func initiateSession() (*session.Session) {
 	return sess
 }
 
-func header() string {
-	headers := []string{
-		"Instance Name",
-		"Instance ID",
-		"Instance State",
-		"Private IPv4 Address",
-		"Public IPv4 Address",
-		"Instance Type",
+func header(service string) string {
+	var headers []string
+
+	if service == "ec2" {
+		headers = []string{
+			"Instance Name",
+			"Instance ID",
+			"Instance State",
+			"Private IPv4 Address",
+			"Public IPv4 Address",
+			"Instance Type",
+		}
+	} else if service == "rds" {
+		headers = []string{
+			"DB Instance ID",
+			"DB Instance Status",
+			"Endpoint",
+			"DB Instance Class",
+			"Engine",
+			"Engine Version",
+			"Multi-AZ",
+		}
 	}
 
 	var underline []string
@@ -69,7 +85,7 @@ func ListInstances() {
 		defer writer.Flush()
 
 		spinner.Stop()
-		fmt.Fprintln(writer, header())
+		fmt.Fprintln(writer, header("ec2"))
 		for _, i := range resp.Reservations {
 			for _, t := range i.Instances {
 				if *t.State.Name == "terminated" {
@@ -204,5 +220,35 @@ func InvokeLambdaFunction(functionName string) {
 	} else {
 		spinner.Stop()
 		fmt.Printf("Status Code: %d\n", *resp.StatusCode)
+	}
+}
+
+func ListRDSInstances() {
+	spinner := utils.GetSpinner("fetching ")
+	spinner.Start()
+
+	svc := rds.New(initiateSession())
+
+	params := &rds.DescribeDBInstancesInput{}
+
+	resp, err := svc.DescribeDBInstances(params)
+	if err != nil {
+		spinner.Stop()
+		fmt.Println(err.Error())
+	} else {
+		writer := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		defer writer.Flush()
+
+		spinner.Stop()
+		fmt.Fprintln(writer, header("rds"))
+		for _, instance := range resp.DBInstances {
+			if *instance.DBInstanceStatus == "terminated" {
+				continue
+			}
+
+			fmt.Fprintln(writer, *instance.DBInstanceIdentifier + "\t", *instance.DBInstanceStatus + "\t",
+				*instance.Endpoint.Address + "\t", *instance.DBInstanceClass + "\t", *instance.Engine + "\t",
+				*instance.EngineVersion + "\t", strconv.FormatBool(*instance.MultiAZ) + "\t")
+		}
 	}
 }

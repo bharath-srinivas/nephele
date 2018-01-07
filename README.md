@@ -1,8 +1,9 @@
 # AWS Go
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 AWS Go is a CLI tool for managing [AWS](https://aws.amazon.com) services without the need
 to login to the AWS console, built to be fast and easy to use. Currently AWS Go supports services like
-EC2 and Lambda only. Support for more services will be added later.
+EC2, Lambda and RDS only. Support for more services will be added later.
 
 ## Installation
 
@@ -12,7 +13,13 @@ architectures will be added later once the tool is stable.
 On Linux run the following command to install aws-go:
 
 ```
-curl -sL https://raw.githubusercontent.com/bharath-srinivas/aws-go/master/setup_aws_go | sudo bash
+curl -sL https://raw.githubusercontent.com/bharath-srinivas/aws-go/master/setup_aws_go | sudo -E bash -
+```
+
+If already installed, upgrade with:
+
+```bash
+$ sudo aws-go upgrade
 ```
 
 ## AWS credentials
@@ -99,6 +106,31 @@ For Lambda:
                 "lambda:Get*",
                 "lambda:List*"
             ],
+            "Resource": "*"
+        }
+    ]
+}
+```
+
+For RDS:
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "rds:Describe*",
+                "rds:ListTagsForResource",
+                "ec2:DescribeAccountAttributes",
+                "ec2:DescribeAvailabilityZones",
+                "ec2:DescribeInternetGateways",
+                "ec2:DescribeSecurityGroups",
+                "ec2:DescribeSubnets",
+                "ec2:DescribeVpcAttribute",
+                "ec2:DescribeVpcs"
+            ],
+            "Effect": "Allow",
             "Resource": "*"
         }
     ]
@@ -232,4 +264,18 @@ Invoking a Lambda function:
 
 ```bash
 $ aws-go lambda invoke testLambdaFunction
+```
+
+### Listing RDS instances
+
+AWS Go lists only the available RDS instances excluding the ones that are being terminated or already terminated. 
+AWS Go provides only the basic information about RDS instances since the terminal cannot accommodate all the information
+about RDS instances. This might be improved in the future.
+
+#### Example
+
+Listing the RDS instances:
+
+```bash
+$ aws-go rds list
 ```

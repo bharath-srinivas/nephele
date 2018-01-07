@@ -367,6 +367,41 @@ _aws-go_list()
     noun_aliases=()
 }
 
+_aws-go_rds_list()
+{
+    last_command="aws-go_rds_list"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
+_aws-go_rds()
+{
+    last_command="aws-go_rds"
+    commands=()
+    commands+=("list")
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
 _aws-go_start()
 {
     last_command="aws-go_start"
@@ -405,6 +440,23 @@ _aws-go_stop()
     noun_aliases=()
 }
 
+_aws-go_upgrade()
+{
+    last_command="aws-go_upgrade"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
 _aws-go_version()
 {
     last_command="aws-go_version"
@@ -429,8 +481,10 @@ _aws-go()
     commands+=("env")
     commands+=("lambda")
     commands+=("list")
+    commands+=("rds")
     commands+=("start")
     commands+=("stop")
+    commands+=("upgrade")
     commands+=("version")
 
     flags=()
