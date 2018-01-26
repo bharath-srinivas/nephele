@@ -26,10 +26,6 @@
   version = "1.12.56"
 
 [[constraint]]
-  name = "github.com/briandowns/spinner"
-  version = "1.0.0"
-
-[[constraint]]
   branch = "master"
   name = "github.com/google/go-github"
 

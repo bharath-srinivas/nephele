@@ -12,20 +12,27 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-	"time"
 
-	"github.com/briandowns/spinner"
 	"github.com/google/go-github/github"
+	//"golang.org/x/crypto/ssh/terminal"
 	"gopkg.in/cheggaaa/pb.v1"
 )
 
-func GetSpinner(prefix string) *spinner.Spinner {
-	loader := spinner.New(spinner.CharSets[11], 100 * time.Millisecond)
-	loader.Color("cyan")
-	loader.Prefix = "\033[36m" + prefix + "\033[m"
-	return loader
-}
+//func getTermSize() (int, int, error) {
+//	fd := int(os.Stdin.Fd())
+//	if !terminal.IsTerminal(fd) {
+//		return 0, 0, errors.New("not a terminal")
+//	}
+//
+//	width, height, err := terminal.GetSize(fd)
+//	if err != nil {
+//		return width, height, err
+//	}
+//
+//	return width, height, nil
+//}
 
+// GetProgressBar returns an instance of ProgressBar with predefined config.
 func GetProgressBar(totalSize int) *pb.ProgressBar {
 	progressBar := pb.New(totalSize).SetUnits(pb.U_BYTES)
 	progressBar.ShowPercent = true

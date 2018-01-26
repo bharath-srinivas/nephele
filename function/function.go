@@ -126,19 +126,20 @@ func StartInstance(instanceId string, dryRun bool) {
 	resp, err := svc.StartInstances(params)
 
 	if err != nil {
-		spinner.Stop()
+		sp.Stop()
 		fmt.Println(err.Error())
 	} else {
 		previousState := *resp.StartingInstances[0].PreviousState.Name
 		currentState := *resp.StartingInstances[0].CurrentState.Name
-		spinner.Stop()
+		sp.Stop()
 		fmt.Println("Previous State: " + previousState + "\nCurrent State: " + currentState)
 	}
 }
 
+// StopInstance stops the specified instance and returns the previous and current state of that instance.
 func StopInstance(instanceId string, dryRun bool) {
-	spinner := utils.GetSpinner("processing ")
-	spinner.Start()
+	sp := spinner.Default(spinnerPrefix[2])
+	sp.Start()
 
 	svc := ec2.New(initiateSession())
 
@@ -150,19 +151,20 @@ func StopInstance(instanceId string, dryRun bool) {
 	resp, err := svc.StopInstances(params)
 
 	if err != nil {
-		spinner.Stop()
+		sp.Stop()
 		fmt.Println(err.Error())
 	} else {
 		previousState := *resp.StoppingInstances[0].PreviousState.Name
 		currentState := *resp.StoppingInstances[0].CurrentState.Name
-		spinner.Stop()
+		sp.Stop()
 		fmt.Println("Previous State: " + previousState + "\nCurrent State: " + currentState)
 	}
 }
 
+// ListLambdaFunctions renders the list of available AWS Lambda functions with their configurations on the terminal.
 func ListLambdaFunctions() {
-	spinner := utils.GetSpinner("fetching ")
-	spinner.Start()
+	sp := spinner.Default(spinnerPrefix[1])
+	sp.Start()
 
 	svc := lambda.New(initiateSession())
 
@@ -172,14 +174,14 @@ func ListLambdaFunctions() {
 
 	if err != nil {
 		if aerr, ok := err.(awserr.Error); ok {
-			spinner.Stop()
+			sp.Stop()
 			fmt.Println(aerr.Error())
 		} else {
-			spinner.Stop()
+			sp.Stop()
 			fmt.Println(err.Error())
 		}
 	} else {
-		spinner.Stop()
+		sp.Stop()
 		for index, function := range resp.Functions {
 			var functionDescription string
 			if function.Description != nil {
@@ -197,9 +199,10 @@ func ListLambdaFunctions() {
 	}
 }
 
+// InvokeLambdaFunction invokes the given function and returns the status code of the invocation.
 func InvokeLambdaFunction(functionName string) {
-	spinner := utils.GetSpinner("processing ")
-	spinner.Start()
+	sp := spinner.Default(spinnerPrefix[2])
+	sp.Start()
 
 	svc := lambda.New(initiateSession())
 
