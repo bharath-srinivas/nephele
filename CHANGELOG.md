@@ -1,3 +1,16 @@
+# v0.2.1 (2018-01-26)
+
+* added word wrap utility function. Closes #2
+* added custom spinner and spinner colors
+* added tablewriter for rendering lists
+* added docstring for godoc generation
+* added unit test for utils
+* added Makefile
+* added travis build
+* added build and godoc badges
+* refactored: go fmt
+* refactored: changed vendor in build script
+
 # v0.2.0 (2018-01-07)
 
 * added upgrade and rds list feature
