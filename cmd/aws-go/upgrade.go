@@ -4,9 +4,10 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"aws-go/utils"
+	"github.com/bharath-srinivas/aws-go/utils"
 )
 
+// upgrade command.
 var upgradeCmd = &cobra.Command{
 	Use: "upgrade",
 	Short: "Upgrade aws-go to the latest version",

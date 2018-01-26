@@ -2,9 +2,10 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"aws-go/function"
+	"github.com/bharath-srinivas/aws-go/function"
 )
 
+// rds command.
 var rdsCmd = &cobra.Command{
 	Use: "rds",
 	Short: "Perform AWS RDS specific operations",
@@ -16,6 +17,7 @@ var rdsCmd = &cobra.Command{
 	},
 }
 
+// rds list command.
 var listRdsCmd = &cobra.Command{
 	Use: "list",
 	Short: "List all the available AWS RDS instances",

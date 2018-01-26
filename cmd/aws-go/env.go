@@ -4,12 +4,16 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"aws-go/store"
+	"github.com/bharath-srinivas/aws-go/store"
 )
 
+// enable env listing.
 var listEnv bool
+
+// delete a env.
 var delEnv string
 
+// env command.
 var envCmd = &cobra.Command{
 	Use: "env",
 	Short: "Manage AWS profile configurations",
@@ -29,6 +33,7 @@ var envCmd = &cobra.Command{
 	},
 }
 
+// env create command.
 var createCmd = &cobra.Command{
 	Use: "create",
 	Short: "Create a new AWS profile with specified region (if provided)",
@@ -42,6 +47,7 @@ var createCmd = &cobra.Command{
 	},
 }
 
+// env use command.
 var useCmd = &cobra.Command{
 	Use: "use",
 	Short: "Use the specified AWS profile and region (if provided)",

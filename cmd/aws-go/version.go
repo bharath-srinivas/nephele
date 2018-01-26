@@ -2,12 +2,15 @@ package cmd
 
 import (
 	"fmt"
+	"runtime"
 
 	"github.com/spf13/cobra"
 )
 
-const version = "v0.2.0"
+// current version.
+const version = "v0.2.1"
 
+// version command.
 var versionCmd = &cobra.Command{
 	Use: "version",
 	Short: "Prints the version information and exit",
@@ -15,9 +18,9 @@ var versionCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("aws-go:")
 		fmt.Println(" version 	:", version)
-		fmt.Println(" build date	: 2018-01-07")
-		fmt.Println(" go version	: go1.9.2")
-		fmt.Println(" platform	: linux/amd64")
+		fmt.Println(" build date	: 2018-01-26")
+		fmt.Println(" go version	:", runtime.Version())
+		fmt.Println(" platform	:", runtime.GOOS + "/" + runtime.GOARCH)
 	},
 }
 

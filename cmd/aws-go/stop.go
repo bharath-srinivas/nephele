@@ -2,9 +2,10 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"aws-go/function"
+	"github.com/bharath-srinivas/aws-go/function"
 )
 
+// stop instance command.
 var stopCmd = &cobra.Command{
 	Use: "stop [instance id]",
 	Short: "Stop the specified EC2 instance",

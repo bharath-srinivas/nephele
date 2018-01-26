@@ -1,3 +1,4 @@
+// Package store implements the database operations required for config.
 package store
 
 import (
@@ -7,9 +8,13 @@ import (
 	"strings"
 )
 
+// AWS Profile.
 var Profile string
+
+// AWS Region.
 var Region string
 
+// schema to be executed during config creation.
 var schema = `CREATE TABLE credentials (
 	name varchar(20) NOT NULL,
 	access_id varchar(100) NOT NULL,
@@ -22,6 +27,7 @@ var schema = `CREATE TABLE credentials (
 	region varchar(20) NULL
 );`
 
+// entryExists returns true if an entry exists in database for the given profile, else false.
 func entryExists(profile string) (bool) {
 	db := newDBSession()
 	defer db.Close()
@@ -37,6 +43,7 @@ func entryExists(profile string) (bool) {
 	return true
 }
 
+// GetCredentials returns accessId, secretKey and region information for the current AWS profile.
 func GetCredentials() (accessId string, secretKey string, region string) {
 	db := newDBSession()
 
@@ -48,6 +55,7 @@ func GetCredentials() (accessId string, secretKey string, region string) {
 	return
 }
 
+// SetCredentials creates a new entry in the database for the current AWS config, if not present, else returns error.
 func SetCredentials() {
 	db := newDBSession()
 
@@ -80,6 +88,7 @@ func SetCredentials() {
 	}
 }
 
+// ListProfiles returns the list of available AWS profiles in the config.
 func ListProfiles() {
 	db := newDBSession()
 	defer db.Close()
@@ -100,6 +109,7 @@ func ListProfiles() {
 	}
 }
 
+// DeleteProfile deletes the given AWS profile from the database.
 func DeleteProfile(profile string) {
 	db := newDBSession()
 	defer db.Close()
@@ -120,6 +130,7 @@ func DeleteProfile(profile string) {
 	fmt.Printf("Successfully deleted '%s' from config!\n", profile)
 }
 
+// UseProfile loads the given profile to the current config in the database.
 func UseProfile() {
 	db := newDBSession()
 

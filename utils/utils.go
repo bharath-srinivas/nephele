@@ -1,3 +1,4 @@
+// Package utils contains all the utility functions used by aws-go
 package utils
 
 import (
@@ -109,6 +110,8 @@ func Upgrade(version string) (error){
 	return nil
 }
 
+// downloadRelease downloads the latest version of aws-go for the current platform, if available.
+// It will return error, if any.
 func downloadRelease(release *github.RepositoryRelease, autoComp string) error {
 	assetInfo := getAssetInfo(release)
 	if assetInfo == nil {
@@ -176,6 +179,7 @@ func downloadRelease(release *github.RepositoryRelease, autoComp string) error {
 	return nil
 }
 
+// getAssetInfo returns the asset info related to the current platform.
 func getAssetInfo(release *github.RepositoryRelease) *github.ReleaseAsset {
 	currentBinary := "aws_go_" + runtime.GOOS + "_" + runtime.GOARCH
 

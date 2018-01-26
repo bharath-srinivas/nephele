@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"aws-go/cmd/aws-go"
+	"github.com/bharath-srinivas/aws-go/cmd/aws-go"
 )
 
 func main () {

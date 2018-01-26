@@ -10,6 +10,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// newDBSession creates the config file required by aws-go to function, if not present and returns a new db session.
 func newDBSession() *sqlx.DB {
 	usr, _ := user.Current()
 	homePath := usr.HomeDir

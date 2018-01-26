@@ -2,9 +2,10 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"aws-go/function"
+	"github.com/bharath-srinivas/aws-go/function"
 )
 
+// lambda command.
 var lambdaCmd = &cobra.Command{
 	Use: "lambda",
 	Short: "Perform AWS Lambda specific operations",
@@ -17,6 +18,7 @@ var lambdaCmd = &cobra.Command{
 	},
 }
 
+// lambda list command.
 var listLambdaCmd = &cobra.Command{
 	Use: "list",
 	Short: "List all available AWS Lambda functions and their configurations",
@@ -27,6 +29,7 @@ var listLambdaCmd = &cobra.Command{
 	},
 }
 
+// lambda invoke command.
 var invokeLambdaCmd = &cobra.Command{
 	Use: "invoke [function name]",
 	Short: "Invoke the specified AWS Lambda function",

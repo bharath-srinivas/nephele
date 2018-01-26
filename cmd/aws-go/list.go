@@ -2,9 +2,10 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"aws-go/function"
+	"github.com/bharath-srinivas/aws-go/function"
 )
 
+// list command.
 var listCmd = &cobra.Command{
 	Use: "list",
 	Short: "List all the available EC2 instances",

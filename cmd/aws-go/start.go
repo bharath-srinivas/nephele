@@ -2,11 +2,13 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"aws-go/function"
+	"github.com/bharath-srinivas/aws-go/function"
 )
 
+// dryRun enabled.
 var dryRun bool
 
+// start instance command.
 var startCmd = &cobra.Command{
 	Use: "start [instance id]",
 	Short: "Start the specified EC2 instance",
