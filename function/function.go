@@ -1,11 +1,10 @@
+// Package function contains the core functions of aws-go.
 package function
 
 import (
 	"fmt"
 	"os"
 	"strconv"
-	"strings"
-	"text/tabwriter"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
@@ -14,10 +13,20 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/lambda"
 	"github.com/aws/aws-sdk-go/service/rds"
-	"aws-go/store"
-	"aws-go/utils"
+	"github.com/olekukonko/tablewriter"
+	"github.com/bharath-srinivas/aws-go/spinner"
+	"github.com/bharath-srinivas/aws-go/store"
+	"github.com/bharath-srinivas/aws-go/utils"
 )
 
+// list of spinner prefixes.
+var spinnerPrefix = []string{
+	"",
+	"\x1b[36mfetching\x1b[m ",
+	"\x1b[36mprocessing\x1b[m ",
+}
+
+// initiateSession returns an instance of AWS Session.
 func initiateSession() (*session.Session) {
 	accessId, secretKey, region := store.GetCredentials()
 
@@ -32,44 +41,10 @@ func initiateSession() (*session.Session) {
 	return sess
 }
 
-func header(service string) string {
-	var headers []string
-
-	if service == "ec2" {
-		headers = []string{
-			"Instance Name",
-			"Instance ID",
-			"Instance State",
-			"Private IPv4 Address",
-			"Public IPv4 Address",
-			"Instance Type",
-		}
-	} else if service == "rds" {
-		headers = []string{
-			"DB Instance ID",
-			"DB Instance Status",
-			"Endpoint",
-			"DB Instance Class",
-			"Engine",
-			"Engine Version",
-			"Multi-AZ",
-		}
-	}
-
-	var underline []string
-
-	for _, header := range headers {
-		underline = append(underline, strings.Repeat("-", len(header)))
-	}
-
-	names := strings.Join(headers, "\t")
-	uLine := strings.Join(underline, "\t")
-	return names + "\n" + uLine + "\t"
-}
-
+// ListInstances renders the list of AWS EC2 instances in an ASCII table on the terminal.
 func ListInstances() {
-	spinner := utils.GetSpinner("fetching ")
-	spinner.Start()
+	sp := spinner.Default(spinnerPrefix[1])
+	sp.Start()
 
 	svc := ec2.New(initiateSession())
 
@@ -78,14 +53,20 @@ func ListInstances() {
 	resp, err := svc.DescribeInstances(params)
 
 	if err != nil {
-		spinner.Stop()
+		sp.Stop()
 		fmt.Println(err.Error())
 	} else {
-		writer := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-		defer writer.Flush()
+		table := tablewriter.NewWriter(os.Stdout)
+		table.SetRowLine(true)
+		table.SetHeader([]string{
+			"Instance Name",
+			"Instance ID",
+			"Instance State",
+			"Private IPv4 Address",
+			"Public IPv4 Address",
+			"Instance Type",
+		})
 
-		spinner.Stop()
-		fmt.Fprintln(writer, header("ec2"))
 		for _, i := range resp.Reservations {
 			for _, t := range i.Instances {
 				if *t.State.Name == "terminated" {
@@ -105,16 +86,27 @@ func ListInstances() {
 					publicIP = *t.PublicIpAddress
 				}
 
-				fmt.Fprintln(writer, instanceName + "\t", *t.InstanceId + "\t", *t.State.Name + "\t",
-					*t.PrivateIpAddress + "\t", publicIP + "\t", *t.InstanceType + "\t")
+				tableData := []string{
+					instanceName,
+					*t.InstanceId,
+					*t.State.Name,
+					*t.PrivateIpAddress,
+					publicIP,
+					*t.InstanceType,
+				}
+
+				table.Append(tableData)
 			}
 		}
+		sp.Stop()
+		table.Render()
 	}
 }
 
+// StartInstance starts the specified instance and returns the previous and current state of that instance.
 func StartInstance(instanceId string, dryRun bool) {
-	spinner := utils.GetSpinner("processing ")
-	spinner.Start()
+	sp := spinner.Default(spinnerPrefix[2])
+	sp.Start()
 
 	svc := ec2.New(initiateSession())
 
@@ -214,44 +206,65 @@ func InvokeLambdaFunction(functionName string) {
 
 	if err != nil {
 		if aerr, ok := err.(awserr.Error); ok {
-			spinner.Stop()
+			sp.Stop()
 			fmt.Println(aerr.Error())
 		} else {
-			spinner.Stop()
+			sp.Stop()
 			fmt.Println(err.Error())
 		}
 	} else {
-		spinner.Stop()
+		sp.Stop()
 		fmt.Printf("Status Code: %d\n", *resp.StatusCode)
 	}
 }
 
+// ListRDSInstances renders the list of available AWS RDS instances in an ASCII table on the terminal.
 func ListRDSInstances() {
-	spinner := utils.GetSpinner("fetching ")
-	spinner.Start()
-
+	sp := spinner.Default(spinnerPrefix[1])
+	sp.Start()
 	svc := rds.New(initiateSession())
 
 	params := &rds.DescribeDBInstancesInput{}
 
 	resp, err := svc.DescribeDBInstances(params)
 	if err != nil {
-		spinner.Stop()
+		sp.Stop()
 		fmt.Println(err.Error())
 	} else {
-		writer := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-		defer writer.Flush()
+		table := tablewriter.NewWriter(os.Stdout)
+		table.SetColWidth(20)
+		table.SetRowLine(true)
+		table.SetHeader([]string{
+			"DB Instance ID",
+			"DB Instance Status",
+			"Endpoint",
+			"DB Instance Class",
+			"Engine",
+			"Engine Version",
+			"Multi-AZ",
+		})
 
-		spinner.Stop()
-		fmt.Fprintln(writer, header("rds"))
 		for _, instance := range resp.DBInstances {
 			if *instance.DBInstanceStatus == "terminated" {
 				continue
 			}
 
-			fmt.Fprintln(writer, *instance.DBInstanceIdentifier + "\t", *instance.DBInstanceStatus + "\t",
-				*instance.Endpoint.Address + "\t", *instance.DBInstanceClass + "\t", *instance.Engine + "\t",
-				*instance.EngineVersion + "\t", strconv.FormatBool(*instance.MultiAZ) + "\t")
+			dbInstanceID := utils.WordWrap(*instance.DBInstanceIdentifier, "-", 2)
+			endpoint := utils.WordWrap(*instance.Endpoint.Address, ".", 2)
+
+			tableData := []string{
+				dbInstanceID,
+				*instance.DBInstanceStatus,
+				endpoint,
+				*instance.DBInstanceClass,
+				*instance.Engine,
+				*instance.EngineVersion,
+				strconv.FormatBool(*instance.MultiAZ),
+			}
+
+			table.Append(tableData)
 		}
+		sp.Stop()
+		table.Render()
 	}
 }

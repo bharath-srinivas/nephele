@@ -35,7 +35,7 @@
 
 [[constraint]]
   name = "github.com/mattn/go-sqlite3"
-  version = "1.4.0"
+  version = "1.6.0"
 
 [[constraint]]
   name = "github.com/spf13/cobra"
@@ -44,3 +44,7 @@
 [[constraint]]
   name = "gopkg.in/cheggaaa/pb.v1"
   version = "1.0.19"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/olekukonko/tablewriter"

@@ -17,10 +17,10 @@ func newDBSession() *sqlx.DB {
 	configPath := path.Join(homePath, ".aws")
 
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		dirErr := os.MkdirAll(path.Join(homePath, ".aws"), 0755)
+		err := os.MkdirAll(path.Join(homePath, ".aws"), 0755)
 
-		if dirErr != nil {
-			fmt.Println(dirErr.Error())
+		if err != nil {
+			fmt.Println(err.Error())
 		}
 	}
 
