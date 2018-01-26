@@ -6,8 +6,8 @@ import (
 	"os/user"
 	"path"
 
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/jmoiron/sqlx"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 // newDBSession creates the config file required by aws-go to function, if not present and returns a new db session.

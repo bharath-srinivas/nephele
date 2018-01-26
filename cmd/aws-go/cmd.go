@@ -24,7 +24,7 @@ to login to the AWS console built to be fast and easy to use.`
 
 // Main command.
 var Command = &cobra.Command{
-	Use:   "aws-go",
+	Use:  "aws-go",
 	Long: description,
 	RunE: run,
 }

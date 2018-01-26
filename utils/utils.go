@@ -72,7 +72,7 @@ func WordWrap(s string, sep string, limit int) string {
 }
 
 // Upgrade checks for latest version of aws-go and downloads the latest version for the current platform, if available.
-func Upgrade(version string) (error){
+func Upgrade(version string) error {
 	gitClient := github.NewClient(nil)
 	releases, _, err := gitClient.Repositories.ListReleases(context.Background(), "bharath-srinivas", "aws-go", nil)
 	autoCompScript, _, _, err := gitClient.Repositories.GetContents(context.Background(), "bharath-srinivas", "aws-go", "aws_go.sh", nil)
@@ -138,14 +138,14 @@ func downloadRelease(release *github.RepositoryRelease, autoComp string) error {
 
 	cmdDir := filepath.Dir(cmdPath)
 	tmpPath := filepath.Join(cmdDir, "aws-go-tmp")
-	tmpFile, err := os.OpenFile(tmpPath, os.O_CREATE | os.O_RDWR, 0755)
+	tmpFile, err := os.OpenFile(tmpPath, os.O_CREATE|os.O_RDWR, 0755)
 	if err != nil {
 		return err
 	}
 
 	scriptDir := filepath.Dir(scriptPath)
 	tmpScriptPath := filepath.Join(scriptDir, "aws_go_latest.sh")
-	tmpScriptFile, err := os.OpenFile(tmpScriptPath, os.O_CREATE | os.O_RDWR, 0755)
+	tmpScriptFile, err := os.OpenFile(tmpScriptPath, os.O_CREATE|os.O_RDWR, 0755)
 	if err != nil {
 		return err
 	}

@@ -7,7 +7,7 @@ import (
 	"github.com/bharath-srinivas/aws-go/cmd/aws-go"
 )
 
-func main () {
+func main() {
 	if err := cmd.Command.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)

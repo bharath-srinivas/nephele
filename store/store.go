@@ -28,7 +28,7 @@ var schema = `CREATE TABLE credentials (
 );`
 
 // entryExists returns true if an entry exists in database for the given profile, else false.
-func entryExists(profile string) (bool) {
+func entryExists(profile string) bool {
 	db := newDBSession()
 	defer db.Close()
 

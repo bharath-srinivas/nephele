@@ -13,10 +13,10 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/lambda"
 	"github.com/aws/aws-sdk-go/service/rds"
-	"github.com/olekukonko/tablewriter"
 	"github.com/bharath-srinivas/aws-go/spinner"
 	"github.com/bharath-srinivas/aws-go/store"
 	"github.com/bharath-srinivas/aws-go/utils"
+	"github.com/olekukonko/tablewriter"
 )
 
 // list of spinner prefixes.
@@ -27,11 +27,11 @@ var spinnerPrefix = []string{
 }
 
 // initiateSession returns an instance of AWS Session.
-func initiateSession() (*session.Session) {
+func initiateSession() *session.Session {
 	accessId, secretKey, region := store.GetCredentials()
 
 	creds := credentials.NewStaticCredentialsFromCreds(credentials.Value{
-		AccessKeyID: accessId,
+		AccessKeyID:     accessId,
 		SecretAccessKey: secretKey})
 
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
@@ -111,7 +111,7 @@ func StartInstance(instanceId string, dryRun bool) {
 	svc := ec2.New(initiateSession())
 
 	params := &ec2.StartInstancesInput{
-		DryRun: aws.Bool(dryRun),
+		DryRun:      aws.Bool(dryRun),
 		InstanceIds: []*string{aws.String(instanceId)},
 	}
 
@@ -136,7 +136,7 @@ func StopInstance(instanceId string, dryRun bool) {
 	svc := ec2.New(initiateSession())
 
 	params := &ec2.StopInstancesInput{
-		DryRun: aws.Bool(dryRun),
+		DryRun:      aws.Bool(dryRun),
 		InstanceIds: []*string{aws.String(instanceId)},
 	}
 

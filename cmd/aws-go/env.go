@@ -3,8 +3,8 @@ package cmd
 import (
 	"os"
 
-	"github.com/spf13/cobra"
 	"github.com/bharath-srinivas/aws-go/store"
+	"github.com/spf13/cobra"
 )
 
 // enable env listing.
@@ -15,7 +15,7 @@ var delEnv string
 
 // env command.
 var envCmd = &cobra.Command{
-	Use: "env",
+	Use:   "env",
 	Short: "Manage AWS profile configurations",
 	Example: `  aws-go env --list
   aws-go env --delete staging`,
@@ -35,8 +35,8 @@ var envCmd = &cobra.Command{
 
 // env create command.
 var createCmd = &cobra.Command{
-	Use: "create",
-	Short: "Create a new AWS profile with specified region (if provided)",
+	Use:     "create",
+	Short:   "Create a new AWS profile with specified region (if provided)",
 	Example: "  aws-go env create --profile staging --region us-west-1",
 	Run: func(cmd *cobra.Command, args []string) {
 		if store.Profile == "" {
@@ -49,8 +49,8 @@ var createCmd = &cobra.Command{
 
 // env use command.
 var useCmd = &cobra.Command{
-	Use: "use",
-	Short: "Use the specified AWS profile and region (if provided)",
+	Use:     "use",
+	Short:   "Use the specified AWS profile and region (if provided)",
 	Example: "  aws-go env use --profile staging --region eu-west-1",
 	Run: func(cmd *cobra.Command, args []string) {
 		if store.Profile == "" {
@@ -61,7 +61,7 @@ var useCmd = &cobra.Command{
 	},
 }
 
-func init()  {
+func init() {
 	Command.AddCommand(envCmd)
 
 	envCmd.AddCommand(createCmd)

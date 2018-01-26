@@ -16,28 +16,28 @@ const (
 
 // Spinner config.
 type Spinner struct {
-	Delay	time.Duration	// Delay is the speed of the spinner
-	Prefix	string 			// Prefix string that will be prepended to the spinner
-	Color	colors.Color	// Color of the spinner
-	active	bool			// status of the spinner
-	spinner	[]string		// character set to be used for the spinner
-	stop	chan bool		// channel to send stop signal to the spinner
+	Delay   time.Duration // Delay is the speed of the spinner
+	Prefix  string        // Prefix string that will be prepended to the spinner
+	Color   colors.Color  // Color of the spinner
+	active  bool          // status of the spinner
+	spinner []string      // character set to be used for the spinner
+	stop    chan bool     // channel to send stop signal to the spinner
 }
 
 // Default is a wrapper around NewSpinner with predefined spinner color and time delay options.
 func Default(p string) *Spinner {
-	return NewSpinner(p, colors.Cyan, 100 * time.Millisecond)
+	return NewSpinner(p, colors.Cyan, 100*time.Millisecond)
 }
 
 // NewSpinner returns a pointer to Spinner instance with provided options.
 func NewSpinner(prefix string, color colors.Color, d time.Duration) *Spinner {
 	return &Spinner{
-		Delay:		d,
-		Prefix:		prefix,
-		Color:		color,
-		active:		false,
-		spinner:	[]string{"⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷"},
-		stop:		make(chan bool, 1),
+		Delay:   d,
+		Prefix:  prefix,
+		Color:   color,
+		active:  false,
+		spinner: []string{"⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷"},
+		stop:    make(chan bool, 1),
 	}
 }
 
