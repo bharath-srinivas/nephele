@@ -35,6 +35,35 @@ func GetProgressBar(totalSize int) *pb.ProgressBar {
 	return progressBar
 }
 
+// WordWrap wraps the given string according to the provided limit with the separator sep and returns the wrapped string.
+func WordWrap(s string, sep string, limit int) string {
+	var wrapped string
+
+	formattedStr := strings.Replace(s, sep, " ", -1)
+	if strings.TrimSpace(formattedStr) == "" {
+		return s
+	}
+
+	strSlice := strings.Fields(formattedStr)
+
+	for len(strSlice) >= 1 {
+		if wrapped == "" {
+			wrapped = wrapped + strings.Join(strSlice[:limit], sep)
+		} else {
+			wrapped = wrapped + "\n" + sep + strings.Join(strSlice[:limit], sep)
+		}
+
+		strSlice = strSlice[limit:]
+
+		if len(strSlice) < limit {
+			limit = len(strSlice)
+		}
+	}
+
+	return wrapped
+}
+
+// Upgrade checks for latest version of aws-go and downloads the latest version for the current platform, if available.
 func Upgrade(version string) (error){
 	gitClient := github.NewClient(nil)
 	releases, _, err := gitClient.Repositories.ListReleases(context.Background(), "bharath-srinivas", "aws-go", nil)
