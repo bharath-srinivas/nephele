@@ -2,17 +2,25 @@
 package store
 
 import (
-	"bufio"
 	"fmt"
 	"os"
-	"strings"
+	"os/user"
+	"path"
+
+	"github.com/jmoiron/sqlx"
+	_ "github.com/mattn/go-sqlite3"
 )
 
-// AWS Profile.
-var Profile string
+// constant for string color wrapping
+const escape = "\x1b"
 
-// AWS Region.
-var Region string
+var (
+	// AWS Profile.
+	Profile string
+
+	// AWS Region.
+	Region string
+)
 
 // schema to be executed during config creation.
 var schema = `CREATE TABLE credentials (
@@ -27,126 +35,80 @@ var schema = `CREATE TABLE credentials (
 	region varchar(20) NULL
 );`
 
-// entryExists returns true if an entry exists in database for the given profile, else false.
-func entryExists(profile string) bool {
-	db := newDBSession()
-	defer db.Close()
-
-	var result string
-	query := db.QueryRow("SELECT access_id FROM credentials WHERE name = $1", profile)
-	query.Scan(&result)
-
-	if result == "" {
-		return false
-	}
-
-	return true
+type store struct {
+	*sqlx.DB // an instance of sqlx DB
 }
 
-// GetCredentials returns accessId, secretKey and region information for the current AWS profile.
-func GetCredentials() (accessId string, secretKey string, region string) {
-	db := newDBSession()
+// newSession creates the config file required by aws-go to function, if not present and creates a new database
+// connection and returns a new store.
+func newSession() *store {
+	usr, _ := user.Current()
+	homePath := usr.HomeDir
 
-	result := db.QueryRow("WITH t1 as (SELECT name FROM credentials), t2 as (SELECT profile FROM current_config) " +
-		"SELECT t1.access_id, t1.secret_key, t2.region FROM credentials t1, current_config t2 WHERE t1.name = t2.profile")
-	result.Scan(&accessId, &secretKey, &region)
+	configPath := path.Join(homePath, ".aws")
 
-	defer db.Close()
-	return
-}
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		err := os.MkdirAll(path.Join(homePath, ".aws"), 0755)
 
-// SetCredentials creates a new entry in the database for the current AWS config, if not present, else returns error.
-func SetCredentials() {
-	db := newDBSession()
-
-	tx, txErr := db.Begin()
-	if txErr != nil {
-		fmt.Println(txErr.Error())
-	}
-	defer db.Close()
-
-	if entryExists(Profile) {
-		fmt.Println("Error: profile already exists!")
-		os.Exit(1)
-	} else {
-		reader := bufio.NewReader(os.Stdin)
-		fmt.Print("AWS Access Key ID: ")
-		accessId, _ := reader.ReadString('\n')
-
-		fmt.Print("AWS Secret Access Key: ")
-		secretKey, _ := reader.ReadString('\n')
-
-		accessId = strings.TrimRight(accessId, "\n")
-		secretKey = strings.TrimRight(secretKey, "\n")
-
-		tx.Exec("INSERT INTO credentials (name, access_id, secret_key) VALUES ($1, $2, $3)", Profile, accessId, secretKey)
-		tx.Exec("UPDATE current_config SET profile = $1, region = $2", Profile, Region)
-		tx.Commit()
-
-		fmt.Printf("Successfully added new profile: %s\n", Profile)
-		fmt.Printf("Switched to '%s' with region '%s'\n", Profile, Region)
-	}
-}
-
-// ListProfiles returns the list of available AWS profiles in the config.
-func ListProfiles() {
-	db := newDBSession()
-	defer db.Close()
-
-	rows, _ := db.Query("SELECT name FROM credentials")
-	var currentEnv string
-	current := db.QueryRow("SELECT profile FROM current_config")
-	current.Scan(&currentEnv)
-
-	for rows.Next() {
-		var envName string
-		rows.Scan(&envName)
-		if envName == currentEnv {
-			fmt.Printf("\033[1;32m%s* (current)\033[m\n", envName)
-		} else {
-			fmt.Println(envName)
+		if err != nil {
+			fmt.Println(err.Error())
 		}
 	}
+
+	configFileName := "aws_go.credentials"
+	configFile := path.Join(configPath, configFileName)
+
+	return &store{
+		newDBSession(configFile),
+	}
 }
 
-// DeleteProfile deletes the given AWS profile from the database.
-func DeleteProfile(profile string) {
-	db := newDBSession()
-	defer db.Close()
+// newDBSession opens a new database connection with the specified config file and returns an instance of sqlx DB.
+func newDBSession(configFile string) *sqlx.DB {
+	db := sqlx.MustConnect("sqlite3", configFile)
 
-	tx, txErr := db.Begin()
-	if txErr != nil {
-		fmt.Println(txErr.Error())
+	if f, err := os.Stat(configFile); !os.IsNotExist(err) {
+		if f.Size() < 1 {
+			db.MustExec(schema)
+			db.MustExec("INSERT INTO current_config (profile, region) VALUES (NULL, NULL)")
+		}
 	}
 
-	if !entryExists(profile) {
-		fmt.Println("Error: no such profile found!")
-		os.Exit(1)
-	}
-
-	tx.Exec("DELETE FROM credentials where name = $1", profile)
-	tx.Commit()
-
-	fmt.Printf("Successfully deleted '%s' from config!\n", profile)
+	return db
 }
 
-// UseProfile loads the given profile to the current config in the database.
-func UseProfile() {
-	db := newDBSession()
+// newTest creates a new database connection for testing purposes and returns a new store.
+func newTest() *store {
+	usr, _ := user.Current()
+	homePath := usr.HomeDir
 
-	tx, txErr := db.Begin()
-	if txErr != nil {
-		fmt.Println(txErr.Error())
+	configPath := path.Join(homePath, ".aws")
+
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		err := os.MkdirAll(path.Join(homePath, ".aws"), 0755)
+
+		if err != nil {
+			fmt.Println(err.Error())
+		}
 	}
-	defer db.Close()
 
-	if !entryExists(Profile) {
-		fmt.Println("Error: no such profile found!")
-		os.Exit(1)
+	configFileName := "aws_go_test.credentials"
+	configFile := path.Join(configPath, configFileName)
+
+	return &store{
+		newDBSession(configFile),
 	}
+}
 
-	tx.Exec("UPDATE current_config SET profile = $1, region = $2", Profile, Region)
-	tx.Commit()
+// cleanup removes the testing config file created during the invocation of newTest function.
+func cleanup() error {
+	usr, _ := user.Current()
+	homePath := usr.HomeDir
 
-	fmt.Printf("Switched to '%s' with region '%s'\n", Profile, Region)
+	configPath := path.Join(homePath, ".aws")
+
+	configFileName := "aws_go_test.credentials"
+	configFile := path.Join(configPath, configFileName)
+
+	return os.Remove(configFile)
 }

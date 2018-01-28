@@ -28,14 +28,14 @@ var spinnerPrefix = []string{
 
 // initiateSession returns an instance of AWS Session.
 func initiateSession() *session.Session {
-	accessId, secretKey, region := store.GetCredentials()
+	userCreds := store.GetCredentials()
 
 	creds := credentials.NewStaticCredentialsFromCreds(credentials.Value{
-		AccessKeyID:     accessId,
-		SecretAccessKey: secretKey})
+		AccessKeyID:     userCreds.AccessId,
+		SecretAccessKey: userCreds.SecretKey})
 
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
-		Config: aws.Config{Credentials: creds, Region: aws.String(region)},
+		Config: aws.Config{Credentials: creds, Region: aws.String(userCreds.Region)},
 	}))
 
 	return sess
