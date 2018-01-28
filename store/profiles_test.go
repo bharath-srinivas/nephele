@@ -17,7 +17,7 @@ func TestListProfiles(t *testing.T) {
 		}
 
 		if ok := db.currentProfile(got); !ok {
-			t.Errorf("Unexpected error: current active profile, got: %s, want: %s", got, true)
+			t.Errorf("Unexpected error: current active profile, got: %t, want: %t", ok, true)
 		}
 	}
 }
