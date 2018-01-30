@@ -21,25 +21,6 @@ print_status() {
 	echo
 }
 
-if test -t 1; then # if terminal
-    ncolors=$(which tput > /dev/null && tput colors) # supports color
-    if test -n "$ncolors" && test "$ncolors" -ge 8; then
-        termcols=$(tput cols)
-        bold="$(tput bold)"
-        underline="$(tput smul)"
-        standout="$(tput smso)"
-        normal="$(tput sgr0)"
-        black="$(tput setaf 0)"
-        red="$(tput setaf 1)"
-        green="$(tput setaf 2)"
-        yellow="$(tput setaf 3)"
-        blue="$(tput setaf 4)"
-        magenta="$(tput setaf 5)"
-        cyan="$(tput setaf 6)"
-        white="$(tput setaf 7)"
-    fi
-fi
-
 bail() {
     echo
     echo 'Error executing command, exiting'
@@ -61,17 +42,17 @@ setup() {
 	PRE_INSTALL_PKGS=""
 
 	if [ ! -x /usr/bin/curl ] && [ ! -x /usr/bin/wget ]; then
-    	PRE_INSTALL_PKGS="${PRE_INSTALL_PKGS} curl"
+	    PRE_INSTALL_PKGS="${PRE_INSTALL_PKGS} curl"
 	fi
 
 	# Populating Cache
 	print_status "Populating apt-get cache..."
 	exec_cmd 'apt-get update'
-	
+
 	# Install the necessary packages needed for performing the installation operation
 	if [ "${PRE_INSTALL_PKGS}" != "" ]; then
-    	print_status "Installing packages required for setup:${PRE_INSTALL_PKGS}"
-    	exec_cmd "apt-get install -y${PRE_INSTALL_PKGS} > /dev/null 2>&1"
+	    print_status "Installing packages required for setup:${PRE_INSTALL_PKGS}"
+	    exec_cmd "apt-get install -y${PRE_INSTALL_PKGS} > /dev/null 2>&1"
 	fi
 
 	OS=$(uname)
@@ -83,8 +64,8 @@ setup() {
             PLATFORM="linux_amd64"
 	    else
 	        echo
-		    echo "Your system architecture: ${OS_ARCH}, is not supported. Exiting now"
-		    exit 1
+	        echo "Your system architecture: ${OS_ARCH}, is not supported. Exiting now"
+	        exit 1
 		fi
 	else
 	    echo
@@ -94,7 +75,7 @@ setup() {
 
     # Get the latest release from the repository
 	LATEST=$(curl -s https://api.github.com/repos/bharath-srinivas/aws-go/tags | grep name  | head -n 1 | sed 's/[," ]//g' | cut -d ':' -f 2)
-    URL="https://github.com/bharath-srinivas/aws-go/releases/download/$LATEST/aws_go_$PLATFORM"
+	URL="https://github.com/bharath-srinivas/aws-go/releases/download/$LATEST/aws_go_$PLATFORM"
 
 	if [ -z "$LATEST" ]; then
 	    echo
