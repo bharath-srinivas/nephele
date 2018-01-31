@@ -2,32 +2,75 @@
 package function
 
 import (
-	"fmt"
-	"os"
 	"strconv"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go/service/ec2/ec2iface"
 	"github.com/aws/aws-sdk-go/service/lambda"
+	"github.com/aws/aws-sdk-go/service/lambda/lambdaiface"
 	"github.com/aws/aws-sdk-go/service/rds"
-	"github.com/bharath-srinivas/aws-go/spinner"
+	"github.com/aws/aws-sdk-go/service/rds/rdsiface"
+
 	"github.com/bharath-srinivas/aws-go/store"
 	"github.com/bharath-srinivas/aws-go/utils"
-	"github.com/olekukonko/tablewriter"
 )
 
-// list of spinner prefixes.
-var spinnerPrefix = []string{
-	"",
-	"\x1b[36mfetching\x1b[m ",
-	"\x1b[36mprocessing\x1b[m ",
+// EC2 represents the AWS EC2 instance fields.
+type EC2 struct {
+	Name         string // Name of the EC2 instance
+	ID           string // EC2 instance ID
+	State        string // Current State of the EC2 instance
+	PrivateIP    string // Private IP address of the EC2 instance
+	PublicIP     string // Public/Elastic IP address of the EC2 instance
+	InstanceType string // EC2 instance type
 }
 
-// initiateSession returns an instance of AWS Session.
-func initiateSession() *session.Session {
+// EC2Service represents the EC2 interface.
+type EC2Service struct {
+	EC2
+	Service ec2iface.EC2API
+}
+
+// Function represents the Lambda function fields.
+type Function struct {
+	Name        string // Name of the Lambda function
+	Description string // Description provided for the Lambda function, if any
+	Runtime     string // Runtime of the Lambda function
+	Memory      int64  // Memory allocated for the Lambda function
+	Timeout     int64  // Timeout set for the Lambda function
+	Handler     string // Lambda function handler
+	Role        string // IAM role assigned for the Lambda function
+	Version     string // Version of the Lambda function
+}
+
+// LambdaService represents the Lambda interface.
+type LambdaService struct {
+	Function
+	Service lambdaiface.LambdaAPI
+}
+
+// RDS represents the RDS instance fields.
+type RDS struct {
+	InstanceID    string // RDS instance ID
+	Status        string // Current status of the RDS instance
+	Endpoint      string // Endpoint of the RDS instance
+	InstanceClass string // RDS instance class
+	Engine        string // RDS engine
+	EngineVersion string // RDS engine version
+	MultiAZ       bool   // Multi-AZ availability of the RDS instance
+}
+
+// RDSService represents the RDS interface.
+type RDSService struct {
+	RDS
+	Service rdsiface.RDSAPI
+}
+
+// NewSession returns an instance of AWS Session.
+func NewSession() *session.Session {
 	userCreds := store.GetCredentials()
 
 	creds := credentials.NewStaticCredentialsFromCreds(credentials.Value{
@@ -41,230 +84,108 @@ func initiateSession() *session.Session {
 	return sess
 }
 
-// ListInstances renders the list of AWS EC2 instances in an ASCII table on the terminal.
-func ListInstances() {
-	sp := spinner.Default(spinnerPrefix[1])
-	sp.Start()
-
-	svc := ec2.New(initiateSession())
-
+// GetInstances returns the list of specific fields of AWS EC2 instances as multidimensional slice suitable
+// for rendering on a terminal ASCII table.
+func (e *EC2Service) GetInstances() ([][]string, error) {
 	params := &ec2.DescribeInstancesInput{}
-
-	resp, err := svc.DescribeInstances(params)
+	resp, err := e.Service.DescribeInstances(params)
 
 	if err != nil {
-		sp.Stop()
-		fmt.Println(err.Error())
-	} else {
-		table := tablewriter.NewWriter(os.Stdout)
-		table.SetRowLine(true)
-		table.SetHeader([]string{
-			"Instance Name",
-			"Instance ID",
-			"Instance State",
-			"Private IPv4 Address",
-			"Public IPv4 Address",
-			"Instance Type",
-		})
-
-		for _, i := range resp.Reservations {
-			for _, t := range i.Instances {
-				if *t.State.Name == "terminated" {
-					continue
-				}
-
-				var instanceName, publicIP string
-				if t.Tags != nil {
-					for _, tag := range t.Tags {
-						if *tag.Key == "Name" {
-							instanceName = *tag.Value
-						}
-					}
-				}
-
-				if t.PublicIpAddress != nil {
-					publicIP = *t.PublicIpAddress
-				}
-
-				tableData := []string{
-					instanceName,
-					*t.InstanceId,
-					*t.State.Name,
-					*t.PrivateIpAddress,
-					publicIP,
-					*t.InstanceType,
-				}
-
-				table.Append(tableData)
-			}
-		}
-		sp.Stop()
-		table.Render()
+		return nil, err
 	}
+
+	var result [][]string
+	for _, i := range resp.Reservations {
+		var ec2List []string
+		for _, t := range i.Instances {
+			if *t.State.Name == "terminated" {
+				continue
+			}
+
+			if t.Tags != nil {
+				ec2List = append(ec2List, getInstanceName(t.Tags))
+			}
+
+			var publicIP string
+			if t.PublicIpAddress != nil {
+				publicIP = *t.PublicIpAddress
+			}
+
+			ec2List = append(ec2List, *t.InstanceId, *t.State.Name, *t.PrivateIpAddress, publicIP, *t.InstanceType)
+		}
+		result = append(result, ec2List)
+	}
+	return result, nil
 }
 
-// StartInstance starts the specified instance and returns the previous and current state of that instance.
-func StartInstance(instanceId string, dryRun bool) {
-	sp := spinner.Default(spinnerPrefix[2])
-	sp.Start()
-
-	svc := ec2.New(initiateSession())
-
+// StartInstances starts the specified instance and returns the state change information of that instance.
+func (e *EC2Service) StartInstance(instanceId string, dryRun bool) (*ec2.StartInstancesOutput, error) {
 	params := &ec2.StartInstancesInput{
 		DryRun:      aws.Bool(dryRun),
 		InstanceIds: []*string{aws.String(instanceId)},
 	}
-
-	resp, err := svc.StartInstances(params)
-
-	if err != nil {
-		sp.Stop()
-		fmt.Println(err.Error())
-	} else {
-		previousState := *resp.StartingInstances[0].PreviousState.Name
-		currentState := *resp.StartingInstances[0].CurrentState.Name
-		sp.Stop()
-		fmt.Println("Previous State: " + previousState + "\nCurrent State: " + currentState)
-	}
+	return e.Service.StartInstances(params)
 }
 
-// StopInstance stops the specified instance and returns the previous and current state of that instance.
-func StopInstance(instanceId string, dryRun bool) {
-	sp := spinner.Default(spinnerPrefix[2])
-	sp.Start()
-
-	svc := ec2.New(initiateSession())
-
+// StopInstances stops the specified instance and returns the state change information of that instance.
+func (e *EC2Service) StopInstance(instanceId string, dryRun bool) (*ec2.StopInstancesOutput, error) {
 	params := &ec2.StopInstancesInput{
 		DryRun:      aws.Bool(dryRun),
 		InstanceIds: []*string{aws.String(instanceId)},
 	}
-
-	resp, err := svc.StopInstances(params)
-
-	if err != nil {
-		sp.Stop()
-		fmt.Println(err.Error())
-	} else {
-		previousState := *resp.StoppingInstances[0].PreviousState.Name
-		currentState := *resp.StoppingInstances[0].CurrentState.Name
-		sp.Stop()
-		fmt.Println("Previous State: " + previousState + "\nCurrent State: " + currentState)
-	}
+	return e.Service.StopInstances(params)
 }
 
-// ListLambdaFunctions renders the list of available AWS Lambda functions with their configurations on the terminal.
-func ListLambdaFunctions() {
-	sp := spinner.Default(spinnerPrefix[1])
-	sp.Start()
-
-	svc := lambda.New(initiateSession())
-
+// GetFunctions returns the list of all the Lambda functions with their configurations.
+func (l *LambdaService) GetFunctions() (*lambda.ListFunctionsOutput, error) {
 	params := &lambda.ListFunctionsInput{}
-
-	resp, err := svc.ListFunctions(params)
-
-	if err != nil {
-		if aerr, ok := err.(awserr.Error); ok {
-			sp.Stop()
-			fmt.Println(aerr.Error())
-		} else {
-			sp.Stop()
-			fmt.Println(err.Error())
-		}
-	} else {
-		sp.Stop()
-		for index, function := range resp.Functions {
-			var functionDescription string
-			if function.Description != nil {
-				functionDescription = *function.Description
-			}
-
-			fmt.Fprintln(os.Stdout, *function.FunctionName, "\n", " -description:", functionDescription, "\n",
-				" -runtime:", *function.Runtime, "\n", " -memory:", *function.MemorySize, "\n",
-				" -timeout:", *function.Timeout, "\n", " -handler:", *function.Handler, "\n",
-				" -role:", *function.Role, "\n", " -version:", *function.Version)
-			if index < len(resp.Functions)-1 {
-				fmt.Printf("\n")
-			}
-		}
-	}
+	return l.Service.ListFunctions(params)
 }
 
-// InvokeLambdaFunction invokes the given function and returns the status code of the invocation.
-func InvokeLambdaFunction(functionName string) {
-	sp := spinner.Default(spinnerPrefix[2])
-	sp.Start()
-
-	svc := lambda.New(initiateSession())
-
+// InvokeFunction invokes the specified function in RequestResponse invocation type and returns the status code.
+func (l *LambdaService) InvokeFunction(functionName string) (*lambda.InvokeOutput, error) {
 	params := &lambda.InvokeInput{
 		FunctionName: aws.String(functionName),
 	}
 
-	resp, err := svc.Invoke(params)
-
-	if err != nil {
-		if aerr, ok := err.(awserr.Error); ok {
-			sp.Stop()
-			fmt.Println(aerr.Error())
-		} else {
-			sp.Stop()
-			fmt.Println(err.Error())
-		}
-	} else {
-		sp.Stop()
-		fmt.Printf("Status Code: %d\n", *resp.StatusCode)
-	}
+	return l.Service.Invoke(params)
 }
 
-// ListRDSInstances renders the list of available AWS RDS instances in an ASCII table on the terminal.
-func ListRDSInstances() {
-	sp := spinner.Default(spinnerPrefix[1])
-	sp.Start()
-	svc := rds.New(initiateSession())
-
+// GetRDSInstances returns the list of specific fields of AWS RDS instances as multidimensional slice suitable
+// for rendering on a terminal ASCII table.
+func (r *RDSService) GetRDSInstances() ([][]string, error) {
 	params := &rds.DescribeDBInstancesInput{}
+	resp, err := r.Service.DescribeDBInstances(params)
 
-	resp, err := svc.DescribeDBInstances(params)
 	if err != nil {
-		sp.Stop()
-		fmt.Println(err.Error())
-	} else {
-		table := tablewriter.NewWriter(os.Stdout)
-		table.SetColWidth(20)
-		table.SetRowLine(true)
-		table.SetHeader([]string{
-			"DB Instance ID",
-			"DB Instance Status",
-			"Endpoint",
-			"DB Instance Class",
-			"Engine",
-			"Engine Version",
-			"Multi-AZ",
-		})
-
-		for _, instance := range resp.DBInstances {
-			if *instance.DBInstanceStatus == "terminated" {
-				continue
-			}
-
-			dbInstanceID := utils.WordWrap(*instance.DBInstanceIdentifier, "-", 2)
-			endpoint := utils.WordWrap(*instance.Endpoint.Address, ".", 2)
-
-			tableData := []string{
-				dbInstanceID,
-				*instance.DBInstanceStatus,
-				endpoint,
-				*instance.DBInstanceClass,
-				*instance.Engine,
-				*instance.EngineVersion,
-				strconv.FormatBool(*instance.MultiAZ),
-			}
-
-			table.Append(tableData)
-		}
-		sp.Stop()
-		table.Render()
+		return nil, err
 	}
+
+	var result [][]string
+	for _, instance := range resp.DBInstances {
+		if *instance.DBInstanceStatus == "terminated" {
+			continue
+		}
+
+		var rdsList []string
+		dbInstanceID := utils.WordWrap(*instance.DBInstanceIdentifier, "-", 2)
+		endpoint := utils.WordWrap(*instance.Endpoint.Address, ".", 2)
+
+		rdsList = append(rdsList, dbInstanceID, *instance.DBInstanceStatus, endpoint, *instance.DBInstanceClass,
+			*instance.Engine, *instance.EngineVersion, strconv.FormatBool(*instance.MultiAZ))
+
+		result = append(result, rdsList)
+	}
+	return result, nil
+}
+
+// getInstanceName is a helper function which will return the instance name from the given tag list.
+func getInstanceName(tag []*ec2.Tag) string {
+	var instanceName string
+	for _, tag := range tag {
+		if *tag.Key == "Name" {
+			instanceName = *tag.Value
+		}
+	}
+	return instanceName
 }

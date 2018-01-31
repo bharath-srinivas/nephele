@@ -3,9 +3,40 @@
 
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
-  packages = ["aws","aws/awserr","aws/awsutil","aws/client","aws/client/metadata","aws/corehandlers","aws/credentials","aws/credentials/ec2rolecreds","aws/credentials/endpointcreds","aws/credentials/stscreds","aws/defaults","aws/ec2metadata","aws/endpoints","aws/request","aws/session","aws/signer/v4","internal/shareddefaults","private/protocol","private/protocol/ec2query","private/protocol/json/jsonutil","private/protocol/jsonrpc","private/protocol/query","private/protocol/query/queryutil","private/protocol/rest","private/protocol/restjson","private/protocol/xml/xmlutil","service/ec2","service/lambda","service/rds","service/sts"]
-  revision = "ce8d7a13a9e7f883d91c39eb98d4f72021eb48e2"
-  version = "v1.12.56"
+  packages = [
+    "aws",
+    "aws/awserr",
+    "aws/awsutil",
+    "aws/client",
+    "aws/client/metadata",
+    "aws/corehandlers",
+    "aws/credentials",
+    "aws/credentials/ec2rolecreds",
+    "aws/credentials/endpointcreds",
+    "aws/credentials/stscreds",
+    "aws/defaults",
+    "aws/ec2metadata",
+    "aws/endpoints",
+    "aws/request",
+    "aws/session",
+    "aws/signer/v4",
+    "internal/shareddefaults",
+    "private/protocol",
+    "private/protocol/ec2query",
+    "private/protocol/json/jsonutil",
+    "private/protocol/jsonrpc",
+    "private/protocol/query",
+    "private/protocol/query/queryutil",
+    "private/protocol/rest",
+    "private/protocol/restjson",
+    "private/protocol/xml/xmlutil",
+    "service/ec2",
+    "service/lambda",
+    "service/rds",
+    "service/sts"
+  ]
+  revision = "1b176c5c6b57adb03bb982c21930e708ebca5a77"
+  version = "v1.12.70"
 
 [[projects]]
   name = "github.com/go-ini/ini"
@@ -39,7 +70,10 @@
 [[projects]]
   branch = "master"
   name = "github.com/jmoiron/sqlx"
-  packages = [".","reflectx"]
+  packages = [
+    ".",
+    "reflectx"
+  ]
   revision = "de8647470aafe4854c976707c431dbe1eb2822c6"
 
 [[projects]]
@@ -87,6 +121,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ce4d590746bc94d1f08ccf3298282e9b7731b751d92f6bb026fb7aec6498e734"
+  inputs-digest = "9ab1d7b21ed7ee8440a65a501c8cc774a03f23bc98879b81730ba1c721226191"
   solver-name = "gps-cdcl"
   solver-version = 1
