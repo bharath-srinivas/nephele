@@ -19,6 +19,7 @@ var startCmd = &cobra.Command{
 	Short:   "Start the specified EC2 instance",
 	Args:    cobra.ExactArgs(1),
 	Example: "aws-go start i-0a12b345c678de",
+	PreRun:  preRun,
 	Run:     startInstance,
 }
 
@@ -33,11 +34,16 @@ func startInstance(cmd *cobra.Command, args []string) {
 	sp.Start()
 	sess := ec2.New(Session)
 
+	instanceId := function.EC2{
+		ID: args[0],
+	}
+
 	ec2Service := &function.EC2Service{
+		EC2:     instanceId,
 		Service: sess,
 	}
 
-	resp, err := ec2Service.StartInstance(args[0], dryRun)
+	resp, err := ec2Service.StartInstance(dryRun)
 
 	if err != nil {
 		sp.Stop()

@@ -13,13 +13,16 @@ var upgradeCmd = &cobra.Command{
 	Short:   "Upgrade aws-go to the latest version",
 	Args:    cobra.NoArgs,
 	Example: "aws-go upgrade",
-	Run: func(cmd *cobra.Command, args []string) {
-		if err := utils.Upgrade(version); err != nil {
-			fmt.Println(err)
-		}
-	},
+	Run:     upgrade,
 }
 
 func init() {
 	Command.AddCommand(upgradeCmd)
+}
+
+// run command.
+func upgrade(cmd *cobra.Command, args []string) {
+	if err := utils.Upgrade(version); err != nil {
+		fmt.Println(err)
+	}
 }

@@ -14,10 +14,11 @@ import (
 
 // list command.
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List all the available EC2 instances",
-	Args:  cobra.NoArgs,
-	Run:   listInstances,
+	Use:    "list",
+	Short:  "List all the available EC2 instances",
+	Args:   cobra.NoArgs,
+	PreRun: preRun,
+	Run:    listInstances,
 }
 
 func init() {

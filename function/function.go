@@ -18,6 +18,9 @@ import (
 	"github.com/bharath-srinivas/aws-go/utils"
 )
 
+// Invocation type for invoking the Lambda function.
+const InvocationType = "RequestResponse"
+
 // EC2 represents the AWS EC2 instance fields.
 type EC2 struct {
 	Name         string // Name of the EC2 instance
@@ -119,19 +122,19 @@ func (e *EC2Service) GetInstances() ([][]string, error) {
 }
 
 // StartInstances starts the specified instance and returns the state change information of that instance.
-func (e *EC2Service) StartInstance(instanceId string, dryRun bool) (*ec2.StartInstancesOutput, error) {
+func (e *EC2Service) StartInstance(dryRun bool) (*ec2.StartInstancesOutput, error) {
 	params := &ec2.StartInstancesInput{
 		DryRun:      aws.Bool(dryRun),
-		InstanceIds: []*string{aws.String(instanceId)},
+		InstanceIds: []*string{aws.String(e.ID)},
 	}
 	return e.Service.StartInstances(params)
 }
 
 // StopInstances stops the specified instance and returns the state change information of that instance.
-func (e *EC2Service) StopInstance(instanceId string, dryRun bool) (*ec2.StopInstancesOutput, error) {
+func (e *EC2Service) StopInstance(dryRun bool) (*ec2.StopInstancesOutput, error) {
 	params := &ec2.StopInstancesInput{
 		DryRun:      aws.Bool(dryRun),
-		InstanceIds: []*string{aws.String(instanceId)},
+		InstanceIds: []*string{aws.String(e.ID)},
 	}
 	return e.Service.StopInstances(params)
 }
@@ -143,9 +146,10 @@ func (l *LambdaService) GetFunctions() (*lambda.ListFunctionsOutput, error) {
 }
 
 // InvokeFunction invokes the specified function in RequestResponse invocation type and returns the status code.
-func (l *LambdaService) InvokeFunction(functionName string) (*lambda.InvokeOutput, error) {
+func (l *LambdaService) InvokeFunction() (*lambda.InvokeOutput, error) {
 	params := &lambda.InvokeInput{
-		FunctionName: aws.String(functionName),
+		FunctionName:   aws.String(l.Name),
+		InvocationType: aws.String(InvocationType),
 	}
 
 	return l.Service.Invoke(params)

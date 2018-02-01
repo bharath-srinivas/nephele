@@ -30,6 +30,7 @@ var listRdsCmd = &cobra.Command{
 	Short:   "List all the available AWS RDS instances",
 	Args:    cobra.NoArgs,
 	Example: "  aws-go rds list",
+	PreRun:  preRun,
 	Run:     listRDSInstances,
 }
 

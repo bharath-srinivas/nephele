@@ -37,10 +37,9 @@ var spinnerPrefix = []string{
 
 // Main command.
 var Command = &cobra.Command{
-	Use:              "aws-go",
-	Long:             description,
-	PersistentPreRun: preRun,
-	RunE:             run,
+	Use:  "aws-go",
+	Long: description,
+	RunE: run,
 }
 
 // Execute executes the provided command.

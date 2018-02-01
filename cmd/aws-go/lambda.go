@@ -19,7 +19,7 @@ var lambdaCmd = &cobra.Command{
 	Long:  `List all the AWS Lambda functions or invoke a AWS Lambda function`,
 	Args:  cobra.NoArgs,
 	Example: `  aws-go lambda list
-  aws-go lambda invoke testLambdaFunction`,
+  aws-go lambda invoke testFunction`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Usage()
 	},
@@ -31,6 +31,7 @@ var listLambdaCmd = &cobra.Command{
 	Short:   "List all available AWS Lambda functions and their configurations",
 	Args:    cobra.NoArgs,
 	Example: "  aws-go lambda list",
+	PreRun:  preRun,
 	Run:     listFunctions,
 }
 
@@ -43,6 +44,7 @@ It's important to note that invoke command invokes the $LATEST version of the la
 available with RequestResponse invocation type`,
 	Args:    cobra.ExactArgs(1),
 	Example: "  aws-go lambda invoke testLambdaFunction",
+	PreRun:  preRun,
 	Run:     invokeFunction,
 }
 
@@ -97,11 +99,16 @@ func invokeFunction(cmd *cobra.Command, args []string) {
 	sp.Start()
 	sess := lambda.New(Session)
 
-	lambdaService := function.LambdaService{
-		Service: sess,
+	functionName := function.Function{
+		Name: args[0],
 	}
 
-	resp, err := lambdaService.InvokeFunction(args[0])
+	lambdaService := function.LambdaService{
+		Function: functionName,
+		Service:  sess,
+	}
+
+	resp, err := lambdaService.InvokeFunction()
 
 	if err != nil {
 		if aerr, ok := err.(awserr.Error); ok {

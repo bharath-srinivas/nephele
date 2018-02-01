@@ -15,15 +15,18 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Prints the version information and exit",
 	Args:  cobra.NoArgs,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("aws-go:")
-		fmt.Println(" version 	:", version)
-		fmt.Println(" build date	: 2018-01-26")
-		fmt.Println(" go version	:", runtime.Version())
-		fmt.Println(" platform	:", runtime.GOOS+"/"+runtime.GOARCH)
-	},
+	Run:   printVersion,
 }
 
 func init() {
 	Command.AddCommand(versionCmd)
+}
+
+// run command.
+func printVersion(cmd *cobra.Command, args []string) {
+	fmt.Println("aws-go:")
+	fmt.Println(" version 	:", version)
+	fmt.Println(" build date	: 2018-01-26")
+	fmt.Println(" go version	:", runtime.Version())
+	fmt.Println(" platform	:", runtime.GOOS+"/"+runtime.GOARCH)
 }
