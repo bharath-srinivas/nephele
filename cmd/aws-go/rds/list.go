@@ -1,4 +1,4 @@
-package cmd
+package rds
 
 import (
 	"fmt"
@@ -8,21 +8,10 @@ import (
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 
+	"github.com/bharath-srinivas/aws-go/cmd/aws-go/command"
 	"github.com/bharath-srinivas/aws-go/function"
-	"github.com/bharath-srinivas/aws-go/spinner"
+	"github.com/bharath-srinivas/aws-go/internal/spinner"
 )
-
-// rds command.
-var rdsCmd = &cobra.Command{
-	Use:     "rds",
-	Short:   "Perform AWS RDS specific operations",
-	Long:    `List, start or stop AWS RDS instances`,
-	Args:    cobra.NoArgs,
-	Example: `  aws-go rds list`,
-	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Usage()
-	},
-}
 
 // rds list command.
 var listRdsCmd = &cobra.Command{
@@ -30,20 +19,15 @@ var listRdsCmd = &cobra.Command{
 	Short:   "List all the available AWS RDS instances",
 	Args:    cobra.NoArgs,
 	Example: "  aws-go rds list",
-	PreRun:  preRun,
+	PreRun:  command.PreRun,
 	Run:     listRDSInstances,
-}
-
-func init() {
-	Command.AddCommand(rdsCmd)
-	rdsCmd.AddCommand(listRdsCmd)
 }
 
 // run command.
 func listRDSInstances(cmd *cobra.Command, args []string) {
-	sp := spinner.Default(spinnerPrefix[1])
+	sp := spinner.Default(spinner.Prefix[1])
 	sp.Start()
-	sess := rds.New(Session)
+	sess := rds.New(command.Session)
 
 	rdsService := &function.RDSService{
 		Service: sess,

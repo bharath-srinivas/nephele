@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/bharath-srinivas/aws-go/colors"
+	"github.com/bharath-srinivas/aws-go/internal/colors"
 )
 
 // constants for spinner color wrapping
@@ -13,6 +13,13 @@ const (
 	escape = "\x1b"
 	reset  = 0
 )
+
+// list of spinner prefixes.
+var Prefix = []string{
+	"",
+	"\x1b[36mfetching\x1b[m ",
+	"\x1b[36mprocessing\x1b[m ",
+}
 
 // Spinner config.
 type Spinner struct {

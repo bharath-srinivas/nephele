@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/bharath-srinivas/aws-go/colors"
+	"github.com/bharath-srinivas/aws-go/internal/colors"
 )
 
 // ListProfiles prints the list of available AWS profiles in the config.

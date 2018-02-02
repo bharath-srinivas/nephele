@@ -1,5 +1,5 @@
 // Package cmd implements all the commands used by aws-go.
-package cmd
+package command
 
 import (
 	"fmt"
@@ -28,18 +28,15 @@ to login to the AWS console built to be fast and easy to use.`
 // AWS Session instance.
 var Session *session.Session
 
-// list of spinner prefixes.
-var spinnerPrefix = []string{
-	"",
-	"\x1b[36mfetching\x1b[m ",
-	"\x1b[36mprocessing\x1b[m ",
-}
-
 // Main command.
 var Command = &cobra.Command{
 	Use:  "aws-go",
 	Long: description,
 	RunE: run,
+}
+
+func AddCommand(cmd *cobra.Command) {
+	Command.AddCommand(cmd)
 }
 
 // Execute executes the provided command.
@@ -54,6 +51,6 @@ func run(cmd *cobra.Command, args []string) error {
 }
 
 // preRun will initialize the session required for all the child commands.
-func preRun(cmd *cobra.Command, args []string) {
+func PreRun(cmd *cobra.Command, args []string) {
 	Session = function.NewSession()
 }

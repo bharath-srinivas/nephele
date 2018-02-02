@@ -1,14 +1,15 @@
-package cmd
+package version
 
 import (
 	"fmt"
 	"runtime"
 
+	"github.com/bharath-srinivas/aws-go/cmd/aws-go/command"
 	"github.com/spf13/cobra"
 )
 
 // current version.
-const version = "v0.2.1"
+const Version = "v0.2.1"
 
 // version command.
 var versionCmd = &cobra.Command{
@@ -19,13 +20,13 @@ var versionCmd = &cobra.Command{
 }
 
 func init() {
-	Command.AddCommand(versionCmd)
+	command.AddCommand(versionCmd)
 }
 
 // run command.
 func printVersion(cmd *cobra.Command, args []string) {
 	fmt.Println("aws-go:")
-	fmt.Println(" version 	:", version)
+	fmt.Println(" version 	:", Version)
 	fmt.Println(" build date	: 2018-01-26")
 	fmt.Println(" go version	:", runtime.Version())
 	fmt.Println(" platform	:", runtime.GOOS+"/"+runtime.GOARCH)

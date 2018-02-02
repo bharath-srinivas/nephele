@@ -1,4 +1,4 @@
-package cmd
+package ec2
 
 import (
 	"fmt"
@@ -8,8 +8,9 @@ import (
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 
+	"github.com/bharath-srinivas/aws-go/cmd/aws-go/command"
 	"github.com/bharath-srinivas/aws-go/function"
-	"github.com/bharath-srinivas/aws-go/spinner"
+	"github.com/bharath-srinivas/aws-go/internal/spinner"
 )
 
 // list command.
@@ -17,19 +18,19 @@ var listCmd = &cobra.Command{
 	Use:    "list",
 	Short:  "List all the available EC2 instances",
 	Args:   cobra.NoArgs,
-	PreRun: preRun,
+	PreRun: command.PreRun,
 	Run:    listInstances,
 }
 
 func init() {
-	Command.AddCommand(listCmd)
+	command.AddCommand(listCmd)
 }
 
 // run command.
 func listInstances(cmd *cobra.Command, args []string) {
-	sp := spinner.Default(spinnerPrefix[1])
+	sp := spinner.Default(spinner.Prefix[1])
 	sp.Start()
-	sess := ec2.New(Session)
+	sess := ec2.New(command.Session)
 
 	ec2Service := &function.EC2Service{
 		Service: sess,

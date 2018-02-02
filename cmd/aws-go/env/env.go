@@ -1,10 +1,13 @@
-package cmd
+// Package env manages the environments for aws-go.
+package env
 
 import (
 	"os"
 
-	"github.com/bharath-srinivas/aws-go/store"
 	"github.com/spf13/cobra"
+
+	"github.com/bharath-srinivas/aws-go/cmd/aws-go/command"
+	"github.com/bharath-srinivas/aws-go/store"
 )
 
 // enable env listing.
@@ -19,27 +22,11 @@ var envCmd = &cobra.Command{
 	Short: "Manage AWS profile configurations",
 	Example: `  aws-go env --list
   aws-go env --delete staging`,
-	Run: envRun,
-}
-
-// env create command.
-var createCmd = &cobra.Command{
-	Use:     "create",
-	Short:   "Create a new AWS profile with specified region (if provided)",
-	Example: "  aws-go env create --profile staging --region us-west-1",
-	Run:     createEnv,
-}
-
-// env use command.
-var useCmd = &cobra.Command{
-	Use:     "use",
-	Short:   "Use the specified AWS profile and region (if provided)",
-	Example: "  aws-go env use --profile staging --region eu-west-1",
-	Run:     useEnv,
+	Run: run,
 }
 
 func init() {
-	Command.AddCommand(envCmd)
+	command.AddCommand(envCmd)
 
 	envCmd.AddCommand(createCmd)
 	envCmd.AddCommand(useCmd)
@@ -54,8 +41,8 @@ func init() {
 	useCmd.Flags().StringVarP(&store.Region, "region", "r", "us-east-1", "the region to use")
 }
 
-// env run command.
-func envRun(cmd *cobra.Command, args []string) {
+// run command.
+func run(cmd *cobra.Command, args []string) {
 	if !listEnv && delEnv == "" {
 		cmd.Usage()
 		os.Exit(0)
@@ -66,22 +53,4 @@ func envRun(cmd *cobra.Command, args []string) {
 	} else if delEnv != "" {
 		store.DeleteProfile(delEnv)
 	}
-}
-
-// env create run command.
-func createEnv(cmd *cobra.Command, args []string) {
-	if store.Profile == "" {
-		cmd.Usage()
-		os.Exit(0)
-	}
-	store.SetCredentials()
-}
-
-// env use run command.
-func useEnv(cmd *cobra.Command, args []string) {
-	if store.Profile == "" {
-		cmd.Usage()
-		os.Exit(0)
-	}
-	store.UseProfile()
 }
