@@ -31,8 +31,11 @@
     "private/protocol/restjson",
     "private/protocol/xml/xmlutil",
     "service/ec2",
+    "service/ec2/ec2iface",
     "service/lambda",
+    "service/lambda/lambdaiface",
     "service/rds",
+    "service/rds/rdsiface",
     "service/sts"
   ]
   revision = "1b176c5c6b57adb03bb982c21930e708ebca5a77"
@@ -121,6 +124,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9ab1d7b21ed7ee8440a65a501c8cc774a03f23bc98879b81730ba1c721226191"
+  inputs-digest = "a7236ce1045f860aa130c364356ba11896fe80bd703aa0c3311da8baea9d7db2"
   solver-name = "gps-cdcl"
   solver-version = 1
