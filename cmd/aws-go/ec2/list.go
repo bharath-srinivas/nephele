@@ -23,7 +23,7 @@ var listCmd = &cobra.Command{
 }
 
 func init() {
-	command.AddCommand(listCmd)
+	ec2Cmd.AddCommand(listCmd)
 }
 
 // run command.

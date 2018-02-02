@@ -201,7 +201,7 @@ available EC2 instances in a table like structure excluding the ones that are be
 List all the available EC2 instances:
 
 ```bash
-$ aws-go list
+$ aws-go ec2 list
 ```
 
 ### Starting EC2 instances
@@ -214,13 +214,13 @@ the `start` command along with the `instance-id` of the instance you want to sta
 Starting an EC2 instance:
 
 ```bash
-$ aws-go start i-0a12b345c678de
+$ aws-go ec2 start i-0a12b345c678de
 ```
 
 Performing a `--dry-run` operation:
 
 ```bash
-$ aws-go start --dry-run i-0a12b345c678de
+$ aws-go ec2 start --dry-run i-0a12b345c678de
 ```
 
 ### Stopping EC2 instances
@@ -233,13 +233,13 @@ as the argument.
 Stopping an EC2 instance:
 
 ```bash
-$ aws-go stop i-0a12b345c678de
+$ aws-go ec2 stop i-0a12b345c678de
 ```
 
 Performing a `--dry-run` operation:
 
 ```bash
-$ aws-go stop --dry-run i-0a12b345c678de
+$ aws-go ec2 stop --dry-run i-0a12b345c678de
 ```
 
 ### Listing Lambda functions

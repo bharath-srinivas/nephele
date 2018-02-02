@@ -11,7 +11,7 @@ import (
 var rdsCmd = &cobra.Command{
 	Use:     "rds",
 	Short:   "Perform AWS RDS specific operations",
-	Long:    `List, start or stop AWS RDS instances`,
+	Long:    `List AWS RDS instances`,
 	Args:    cobra.NoArgs,
 	Example: `  aws-go rds list`,
 	Run: func(cmd *cobra.Command, args []string) {

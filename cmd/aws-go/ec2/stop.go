@@ -22,7 +22,7 @@ var stopCmd = &cobra.Command{
 }
 
 func init() {
-	command.AddCommand(stopCmd)
+	ec2Cmd.AddCommand(stopCmd)
 	stopCmd.Flags().BoolVarP(&dryRun, "dry-run", "", false, "perform the operation with dry run enabled")
 }
 

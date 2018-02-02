@@ -25,7 +25,7 @@ var startCmd = &cobra.Command{
 }
 
 func init() {
-	command.AddCommand(startCmd)
+	ec2Cmd.AddCommand(startCmd)
 	startCmd.Flags().BoolVarP(&dryRun, "dry-run", "", false, "perform the operation with dry run enabled")
 }
 
