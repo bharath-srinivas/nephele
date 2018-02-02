@@ -5,9 +5,9 @@
 package mock_lambdaiface
 
 import (
-	aws "github.com/bharath-srinivas/aws-go/vendor/github.com/aws/aws-sdk-go/aws"
-	request "github.com/bharath-srinivas/aws-go/vendor/github.com/aws/aws-sdk-go/aws/request"
-	lambda "github.com/bharath-srinivas/aws-go/vendor/github.com/aws/aws-sdk-go/service/lambda"
+	aws "github.com/aws/aws-sdk-go/aws"
+	request "github.com/aws/aws-sdk-go/aws/request"
+	lambda "github.com/aws/aws-sdk-go/service/lambda"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )

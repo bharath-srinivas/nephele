@@ -5,9 +5,9 @@
 package mock_rdsiface
 
 import (
-	aws "github.com/bharath-srinivas/aws-go/vendor/github.com/aws/aws-sdk-go/aws"
-	request "github.com/bharath-srinivas/aws-go/vendor/github.com/aws/aws-sdk-go/aws/request"
-	rds "github.com/bharath-srinivas/aws-go/vendor/github.com/aws/aws-sdk-go/service/rds"
+	aws "github.com/aws/aws-sdk-go/aws"
+	request "github.com/aws/aws-sdk-go/aws/request"
+	rds "github.com/aws/aws-sdk-go/service/rds"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )

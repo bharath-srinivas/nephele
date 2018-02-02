@@ -5,9 +5,9 @@
 package mock_ec2iface
 
 import (
-	aws "github.com/bharath-srinivas/aws-go/vendor/github.com/aws/aws-sdk-go/aws"
-	request "github.com/bharath-srinivas/aws-go/vendor/github.com/aws/aws-sdk-go/aws/request"
-	ec2 "github.com/bharath-srinivas/aws-go/vendor/github.com/aws/aws-sdk-go/service/ec2"
+	aws "github.com/aws/aws-sdk-go/aws"
+	request "github.com/aws/aws-sdk-go/aws/request"
+	ec2 "github.com/aws/aws-sdk-go/service/ec2"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )
