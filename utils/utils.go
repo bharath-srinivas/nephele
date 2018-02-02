@@ -15,23 +15,8 @@ import (
 	"strings"
 
 	"github.com/google/go-github/github"
-	//"golang.org/x/crypto/ssh/terminal"
 	"gopkg.in/cheggaaa/pb.v1"
 )
-
-//func getTermSize() (int, int, error) {
-//	fd := int(os.Stdin.Fd())
-//	if !terminal.IsTerminal(fd) {
-//		return 0, 0, errors.New("not a terminal")
-//	}
-//
-//	width, height, err := terminal.GetSize(fd)
-//	if err != nil {
-//		return width, height, err
-//	}
-//
-//	return width, height, nil
-//}
 
 // GetProgressBar returns an instance of ProgressBar with predefined config.
 func GetProgressBar(totalSize int) *pb.ProgressBar {
@@ -43,32 +28,34 @@ func GetProgressBar(totalSize int) *pb.ProgressBar {
 	return progressBar
 }
 
-// WordWrap wraps the given string according to the provided limit with the separator sep and returns the wrapped string.
-func WordWrap(s string, sep string, limit int) string {
-	var wrapped string
+// WordWrap wraps the given string according to the provided parts with the separator sep and returns the wrapped
+// string if and only if the given string has the character `.` or `-`. Currently WordWrap is very naive and it'll
+// break the string if the separator position is greater than the half length of the provided string. It has been
+// written solely for the purpose of wrapping text for rendering in table writer and not recommended for normal use.
+func WordWrap(s string, sep byte, parts int) string {
+	var wrapped []byte
 
-	formattedStr := strings.Replace(s, sep, " ", -1)
-	if strings.TrimSpace(formattedStr) == "" {
+	if parts <= 0 || !hasSeparator(s) {
 		return s
 	}
 
-	strSlice := strings.Fields(formattedStr)
+	halfLength := len(s) / parts
+	if halfLength <= 10 {
+		return s
+	}
 
-	for len(strSlice) >= 1 {
-		if wrapped == "" {
-			wrapped = wrapped + strings.Join(strSlice[:limit], sep)
-		} else {
-			wrapped = wrapped + "\n" + sep + strings.Join(strSlice[:limit], sep)
-		}
-
-		strSlice = strSlice[limit:]
-
-		if len(strSlice) < limit {
-			limit = len(strSlice)
+	broken := false
+	for i, char := range s {
+		wrapped = append(wrapped, byte(char))
+		if char == rune(sep) && !broken {
+			if i >= halfLength {
+				wrapped = append(wrapped, byte('\n'))
+				broken = true
+			}
 		}
 	}
 
-	return wrapped
+	return string(wrapped)
 }
 
 // Upgrade checks for latest version of aws-go and downloads the latest version for the current platform, if available.
@@ -190,4 +177,15 @@ func getAssetInfo(release *github.RepositoryRelease) *github.ReleaseAsset {
 	}
 
 	return nil
+}
+
+// hasSeparator is a helper function for WordWrap which will return true if the given string has any one of the
+// `.` or `-` separator.
+func hasSeparator(s string) bool {
+	for _, c := range s {
+		if c == '.' || c == '-' {
+			return true
+		}
+	}
+	return false
 }

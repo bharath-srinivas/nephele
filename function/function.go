@@ -172,11 +172,13 @@ func (r *RDSService) GetRDSInstances() ([][]string, error) {
 		}
 
 		var rdsList []string
-		dbInstanceID := utils.WordWrap(*instance.DBInstanceIdentifier, "-", 2)
-		endpoint := utils.WordWrap(*instance.Endpoint.Address, ".", 2)
+		dbInstanceID := utils.WordWrap(*instance.DBInstanceIdentifier, '-', 2)
+		endpoint := utils.WordWrap(*instance.Endpoint.Address, '.', 2)
+
+		engineInfo := *instance.Engine + "/" + *instance.EngineVersion
 
 		rdsList = append(rdsList, dbInstanceID, *instance.DBInstanceStatus, endpoint, *instance.DBInstanceClass,
-			*instance.Engine, *instance.EngineVersion, strconv.FormatBool(*instance.MultiAZ))
+			engineInfo, strconv.FormatBool(*instance.MultiAZ))
 
 		result = append(result, rdsList)
 	}

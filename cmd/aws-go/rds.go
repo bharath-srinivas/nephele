@@ -60,11 +60,10 @@ func listRDSInstances(cmd *cobra.Command, args []string) {
 		table.SetRowLine(true)
 		table.SetHeader([]string{
 			"DB Instance ID",
-			"DB Instance Status",
+			"Status",
 			"Endpoint",
-			"DB Instance Class",
-			"Engine",
-			"Engine Version",
+			"Instance Class",
+			"Engine/Version",
 			"Multi-AZ",
 		})
 		table.AppendBulk(resp)
