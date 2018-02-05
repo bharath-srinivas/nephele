@@ -2,7 +2,11 @@
 package function
 
 import (
+	"encoding/json"
+	"errors"
+	"io/ioutil"
 	"strconv"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -21,6 +25,15 @@ import (
 // Invocation type for invoking the Lambda function.
 const InvocationType = "RequestResponse"
 
+// filterMap contains the mappings between the filters provided by the user and the actual EC2 filters.
+var filterMap = map[string]string{
+	"az":    "availability-zone",
+	"id":    "instance-id",
+	"name":  "tag:Name",
+	"state": "instance-state-name",
+	"type":  "instance-type",
+}
+
 // EC2 represents the AWS EC2 instance fields.
 type EC2 struct {
 	Name         string // Name of the EC2 instance
@@ -34,6 +47,7 @@ type EC2 struct {
 // EC2Service represents the EC2 interface.
 type EC2Service struct {
 	EC2
+	Filters []*ec2.Filter // List of filters to apply for EC2 list
 	Service ec2iface.EC2API
 }
 
@@ -87,10 +101,87 @@ func NewSession() *session.Session {
 	return sess
 }
 
+// GetAllInstances gets all the EC2 instances info and returns them as it is.
+func (e *EC2Service) GetAllInstances() (*ec2.DescribeInstancesOutput, error) {
+	params := &ec2.DescribeInstancesInput{}
+	return e.Service.DescribeInstances(params)
+}
+
+// SetFilters sets the user provided filter list to the Filters by replacing the user provided filter keys with
+// the actual filter keys and returns an error, if any.
+func (e *EC2Service) SetFilters(filters []string) error {
+	for _, filter := range filters {
+		if !strings.Contains(filter, "=") {
+			return errors.New("filter error: invalid filter format")
+		}
+
+		var filterList ec2.Filter
+		userFilter := strings.Split(filter, "=")
+
+		filterName, ok := filterMap[userFilter[0]]
+		if !ok {
+			return errors.New("filter error: invalid filter key: '" + userFilter[0] + "'")
+		}
+
+		filterValues := []string{
+			"*" + userFilter[1] + "*",
+			"*" + strings.Title(userFilter[1]) + "*",
+			"*" + strings.ToLower(userFilter[1]) + "*",
+		}
+
+		filterList.Name = aws.String(filterName)
+		filterList.Values = aws.StringSlice(filterValues)
+
+		e.Filters = append(e.Filters, &filterList)
+	}
+
+	return nil
+}
+
+// LoadFiltersFromFile loads the user provided filters that are present in the json file to the Filters by replacing
+// them with actual filter keys.
+func (e *EC2Service) LoadFiltersFromFile(filtersFile string) error {
+	if !strings.Contains(filtersFile, ".json") {
+		return errors.New("filter file error: invalid file format")
+	}
+
+	fileContent, err := ioutil.ReadFile(filtersFile)
+	if err != nil {
+		return err
+	}
+
+	decoder := json.NewDecoder(strings.NewReader(string(fileContent)))
+	decoder.Decode(&e.Filters)
+
+	for _, filter := range e.Filters {
+		filterName, ok := filterMap[*filter.Name]
+		if !ok {
+			return errors.New("filter error: invalid filter key: '" + *filter.Name + "'")
+		}
+
+		*filter.Name = filterName
+		for _, value := range filter.Values {
+			*value = "*" + *value + "*"
+			valueTitle := strings.Title(*value)
+			valueLower := strings.ToLower(*value)
+			filter.Values = append(filter.Values, &valueTitle, &valueLower)
+		}
+	}
+
+	return nil
+}
+
 // GetInstances returns the list of specific fields of AWS EC2 instances as multidimensional slice suitable
 // for rendering on a terminal ASCII table.
 func (e *EC2Service) GetInstances() ([][]string, error) {
-	params := &ec2.DescribeInstancesInput{}
+	var params *ec2.DescribeInstancesInput
+
+	if e.Filters != nil {
+		params = &ec2.DescribeInstancesInput{
+			Filters: e.Filters,
+		}
+	}
+
 	resp, err := e.Service.DescribeInstances(params)
 
 	if err != nil {

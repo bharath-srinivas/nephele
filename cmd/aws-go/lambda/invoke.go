@@ -22,11 +22,15 @@ available with RequestResponse invocation type`,
 	Args:    cobra.ExactArgs(1),
 	Example: "  aws-go lambda invoke testLambdaFunction",
 	PreRun:  command.PreRun,
-	Run:     invokeFunction,
+	RunE:    invokeFunction,
+}
+
+func init() {
+	lambdaCmd.AddCommand(invokeLambdaCmd)
 }
 
 // run command for invoke function.
-func invokeFunction(cmd *cobra.Command, args []string) {
+func invokeFunction(cmd *cobra.Command, args []string) error {
 	sp := spinner.Default(spinner.Prefix[2])
 	sp.Start()
 	sess := lambda.New(command.Session)
@@ -45,13 +49,15 @@ func invokeFunction(cmd *cobra.Command, args []string) {
 	if err != nil {
 		if aerr, ok := err.(awserr.Error); ok {
 			sp.Stop()
-			fmt.Println(aerr.Error())
+			return aerr
 		} else {
 			sp.Stop()
-			fmt.Println(err.Error())
+			return err
 		}
-	} else {
-		sp.Stop()
-		fmt.Printf("Status Code: %d\n", *resp.StatusCode)
 	}
+
+	sp.Stop()
+	fmt.Printf("Status Code: %d\n", *resp.StatusCode)
+
+	return nil
 }

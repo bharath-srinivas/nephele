@@ -18,7 +18,7 @@ var stopCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(1),
 	Example: "aws-go stop i-0a12b345c678de",
 	PreRun:  command.PreRun,
-	Run:     stopInstance,
+	RunE:    stopInstance,
 }
 
 func init() {
@@ -27,7 +27,7 @@ func init() {
 }
 
 // run command.
-func stopInstance(cmd *cobra.Command, args []string) {
+func stopInstance(cmd *cobra.Command, args []string) error {
 	sp := spinner.Default(spinner.Prefix[2])
 	sp.Start()
 	sess := ec2.New(command.Session)
@@ -42,14 +42,15 @@ func stopInstance(cmd *cobra.Command, args []string) {
 	}
 
 	resp, err := ec2Service.StopInstance(dryRun)
-
 	if err != nil {
 		sp.Stop()
-		fmt.Println(err.Error())
-	} else {
-		previousState := *resp.StoppingInstances[0].PreviousState.Name
-		currentState := *resp.StoppingInstances[0].CurrentState.Name
-		sp.Stop()
-		fmt.Println("Previous State: " + previousState + "\nCurrent State: " + currentState)
+		return err
 	}
+
+	previousState := *resp.StoppingInstances[0].PreviousState.Name
+	currentState := *resp.StoppingInstances[0].CurrentState.Name
+	sp.Stop()
+	fmt.Println("Previous State: " + previousState + "\nCurrent State: " + currentState)
+
+	return nil
 }

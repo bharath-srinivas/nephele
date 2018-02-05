@@ -16,6 +16,12 @@ var useCmd = &cobra.Command{
 	Run:     useEnv,
 }
 
+func init() {
+	envCmd.AddCommand(useCmd)
+	useCmd.Flags().StringVarP(&store.Profile, "profile", "p", "", "the name of the profile")
+	useCmd.Flags().StringVarP(&store.Region, "region", "r", "us-east-1", "the region to use")
+}
+
 // env use run command.
 func useEnv(cmd *cobra.Command, args []string) {
 	if store.Profile == "" {

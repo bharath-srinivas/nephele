@@ -48,6 +48,12 @@
   version = "v1.32.0"
 
 [[projects]]
+  name = "github.com/golang/mock"
+  packages = ["gomock"]
+  revision = "13f360950a79f5864a972c786a10a50e44b69541"
+  version = "v1.0.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/google/go-github"
   packages = ["github"]
@@ -98,10 +104,10 @@
   revision = "96aac992fc8b1a4c83841a6c3e7178d20d989625"
 
 [[projects]]
+  branch = "master"
   name = "github.com/spf13/cobra"
   packages = ["."]
-  revision = "7b2c5ac9fc04fc5efafb60700713d4fa609b777b"
-  version = "v0.0.1"
+  revision = "eb589833591a36b5720108a621baab8dee9b2ac5"
 
 [[projects]]
   name = "github.com/spf13/pflag"
@@ -124,6 +130,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a7236ce1045f860aa130c364356ba11896fe80bd703aa0c3311da8baea9d7db2"
+  inputs-digest = "58df70ceb92b38360b7cfd3cf3bb447cd0cd702ec17187e949f65ca965b3b63c"
   solver-name = "gps-cdcl"
   solver-version = 1

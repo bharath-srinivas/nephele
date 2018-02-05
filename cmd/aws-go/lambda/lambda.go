@@ -22,6 +22,4 @@ var lambdaCmd = &cobra.Command{
 
 func init() {
 	command.AddCommand(lambdaCmd)
-	lambdaCmd.AddCommand(listLambdaCmd)
-	lambdaCmd.AddCommand(invokeLambdaCmd)
 }

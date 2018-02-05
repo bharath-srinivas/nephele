@@ -20,11 +20,15 @@ var listLambdaCmd = &cobra.Command{
 	Args:    cobra.NoArgs,
 	Example: "  aws-go lambda list",
 	PreRun:  command.PreRun,
-	Run:     listFunctions,
+	RunE:    listFunctions,
+}
+
+func init() {
+	lambdaCmd.AddCommand(listLambdaCmd)
 }
 
 // run command for lambda list.
-func listFunctions(cmd *cobra.Command, args []string) {
+func listFunctions(cmd *cobra.Command, args []string) error {
 	sp := spinner.Default(spinner.Prefix[1])
 	sp.Start()
 	sess := lambda.New(command.Session)
@@ -38,26 +42,28 @@ func listFunctions(cmd *cobra.Command, args []string) {
 	if err != nil {
 		if aerr, ok := err.(awserr.Error); ok {
 			sp.Stop()
-			fmt.Println(aerr.Error())
+			return aerr
 		} else {
 			sp.Stop()
-			fmt.Println(err.Error())
-		}
-	} else {
-		sp.Stop()
-		for index, fn := range resp.Functions {
-			var functionDescription string
-			if fn.Description != nil {
-				functionDescription = *fn.Description
-			}
-
-			fmt.Fprintln(os.Stdout, *fn.FunctionName, "\n", " -description:", functionDescription, "\n",
-				" -runtime:", *fn.Runtime, "\n", " -memory:", *fn.MemorySize, "\n",
-				" -timeout:", *fn.Timeout, "\n", " -handler:", *fn.Handler, "\n",
-				" -role:", *fn.Role, "\n", " -version:", *fn.Version)
-			if index < len(resp.Functions)-1 {
-				fmt.Printf("\n")
-			}
+			return err
 		}
 	}
+
+	sp.Stop()
+	for index, fn := range resp.Functions {
+		var functionDescription string
+		if fn.Description != nil {
+			functionDescription = *fn.Description
+		}
+
+		fmt.Fprintln(os.Stdout, *fn.FunctionName, "\n", " -description:", functionDescription, "\n",
+			" -runtime:", *fn.Runtime, "\n", " -memory:", *fn.MemorySize, "\n",
+			" -timeout:", *fn.Timeout, "\n", " -handler:", *fn.Handler, "\n",
+			" -role:", *fn.Role, "\n", " -version:", *fn.Version)
+		if index < len(resp.Functions)-1 {
+			fmt.Printf("\n")
+		}
+	}
+
+	return nil
 }

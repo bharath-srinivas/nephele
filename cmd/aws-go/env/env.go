@@ -27,18 +27,8 @@ var envCmd = &cobra.Command{
 
 func init() {
 	command.AddCommand(envCmd)
-
-	envCmd.AddCommand(createCmd)
-	envCmd.AddCommand(useCmd)
-
 	envCmd.Flags().BoolVarP(&listEnv, "list", "l", false, "list all the available profiles")
 	envCmd.Flags().StringVarP(&delEnv, "delete", "d", "", "delete the specified profile")
-
-	createCmd.Flags().StringVarP(&store.Profile, "profile", "p", "", "the name of the profile")
-	createCmd.Flags().StringVarP(&store.Region, "region", "r", "us-east-1", "the region to use")
-
-	useCmd.Flags().StringVarP(&store.Profile, "profile", "p", "", "the name of the profile")
-	useCmd.Flags().StringVarP(&store.Region, "region", "r", "us-east-1", "the region to use")
 }
 
 // run command.

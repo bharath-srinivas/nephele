@@ -195,13 +195,74 @@ for more information on how to set the required policies.
 
 For listing all the EC2 instances in the current selected profile, you just have to run `list`. This will list all the
 available EC2 instances in a table like structure excluding the ones that are being terminated or already terminated.
+You can get entire info about all the instances in `JSON` format using the `-a` flag. You can also apply filters to the
+list with the `--filters` or `-f` flag. The filtering functionality is supported only on normal table listing and not 
+on the `-a` flag.
+
+#### Supported filters:
+The following filters are supported by the list command. It's important to note that with the `--filters` flag, you
+cannot search for multiple instance names or multiple availability zones etc. In that case you can use the `JSON` file
+which allows you to filter based on multiple values. 
+
+Note that every filter is case insensitive:
+
+* `name` instance name
+* `id` instance ID
+* `state` instance state
+* `type` instance type
+* `az` availability zone of the instance
+
+#### Example filters file:
+     
+```json
+ [
+   {
+     "name": "name",
+     "values": ["web"]
+   },
+   {
+     "name": "az",
+     "values": ["us-east-1a", "us-east-1d"]
+   }
+ ]
+```
 
 #### Example
 
-List all the available EC2 instances:
+List all the available EC2 instances in a table format:
 
 ```bash
 $ aws-go ec2 list
+```
+
+Apply filters to the list:
+
+```bash
+$ aws-go ec2 list --filters name=web,az=us-east-1a
+```
+
+Applying filters from a `JSON` file:
+
+```bash
+$ aws-go ec2 list -F filters.json
+```
+
+Listing everything in `JSON` format:
+
+```bash
+$ aws-go ec2 list --all
+```
+
+Piping `JSON` to a `JSON` file:
+
+```bash
+$ aws-go ec2 list --all > ec2.json
+```
+
+Performing `less` on `JSON` output:
+
+```bash
+$ aws-go ec2 list --all | less
 ```
 
 ### Starting EC2 instances
@@ -276,7 +337,7 @@ about RDS instances. This might be improved in the future.
 
 #### Example
 
-Listing the RDS instances:
+Listing the RDS instances in a table:
 
 ```bash
 $ aws-go rds list

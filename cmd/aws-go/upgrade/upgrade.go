@@ -1,8 +1,6 @@
 package upgrade
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 
 	"github.com/bharath-srinivas/aws-go/cmd/aws-go/command"
@@ -16,7 +14,7 @@ var upgradeCmd = &cobra.Command{
 	Short:   "Upgrade aws-go to the latest version",
 	Args:    cobra.NoArgs,
 	Example: "aws-go upgrade",
-	Run:     doUpgrade,
+	RunE:    doUpgrade,
 }
 
 func init() {
@@ -24,8 +22,9 @@ func init() {
 }
 
 // run command.
-func doUpgrade(cmd *cobra.Command, args []string) {
+func doUpgrade(cmd *cobra.Command, args []string) error {
 	if err := upgrade.Upgrade(version.Version); err != nil {
-		fmt.Println(err)
+		return err
 	}
+	return nil
 }

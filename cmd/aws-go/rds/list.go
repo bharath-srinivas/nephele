@@ -1,7 +1,6 @@
 package rds
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/aws/aws-sdk-go/service/rds"
@@ -20,11 +19,15 @@ var listRdsCmd = &cobra.Command{
 	Args:    cobra.NoArgs,
 	Example: "  aws-go rds list",
 	PreRun:  command.PreRun,
-	Run:     listRDSInstances,
+	RunE:    listRDSInstances,
+}
+
+func init() {
+	rdsCmd.AddCommand(listRdsCmd)
 }
 
 // run command.
-func listRDSInstances(cmd *cobra.Command, args []string) {
+func listRDSInstances(cmd *cobra.Command, args []string) error {
 	sp := spinner.Default(spinner.Prefix[1])
 	sp.Start()
 	sess := rds.New(command.Session)
@@ -37,21 +40,23 @@ func listRDSInstances(cmd *cobra.Command, args []string) {
 
 	if err != nil {
 		sp.Stop()
-		fmt.Println(err.Error())
-	} else {
-		table := tablewriter.NewWriter(os.Stdout)
-		table.SetColWidth(20)
-		table.SetRowLine(true)
-		table.SetHeader([]string{
-			"DB Instance ID",
-			"Status",
-			"Endpoint",
-			"Instance Class",
-			"Engine/Version",
-			"Multi-AZ",
-		})
-		table.AppendBulk(resp)
-		sp.Stop()
-		table.Render()
+		return err
 	}
+
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetColWidth(20)
+	table.SetRowLine(true)
+	table.SetHeader([]string{
+		"DB Instance ID",
+		"Status",
+		"Endpoint",
+		"Instance Class",
+		"Engine/Version",
+		"Multi-AZ",
+	})
+	table.AppendBulk(resp)
+	sp.Stop()
+	table.Render()
+
+	return nil
 }

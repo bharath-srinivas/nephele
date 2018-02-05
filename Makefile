@@ -1,8 +1,7 @@
 BINARY = aws_go
-GOARCH = amd64
 BUILD_DIR=$(shell pwd)
 
-LDFLAGS = -ldflags "-s -w"
+LDFLAGS = -ldflags="-s -w"
 
 all: clean test build
 
@@ -13,12 +12,17 @@ test:
 
 # Build linux binaries.
 linux:
-	@cd cmd; \
-	GOOS=linux GOARCH=${GOARCH} go build ${LDFLAGS} -o ${BUILD_DIR}/${BINARY}_linux_${GOARCH} .
+	@cd cmd/aws-go; \
+	GOOS=linux GOARCH=amd64 go build ${LDFLAGS} -o ${BUILD_DIR}/${BINARY}_linux_amd64 .
 .PHONY: linux
 
+linux-386:
+	@cd cmd/aws-go; \
+	GOOS=linux GOARCH=386 CGO_ENABLED=1 CFLAGS=-m32 go build ${LDFLAGS} -o ${BUILD_DIR}/${BINARY}_linux_386 .
+.PHONE: linux-386
+
 # Build release binaries.
-build: linux
+build: linux linux-386
 .PHONY: build
 
 # Clean build artifacts.

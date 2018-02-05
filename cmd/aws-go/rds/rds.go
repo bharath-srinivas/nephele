@@ -21,5 +21,4 @@ var rdsCmd = &cobra.Command{
 
 func init() {
 	command.AddCommand(rdsCmd)
-	rdsCmd.AddCommand(listRdsCmd)
 }
