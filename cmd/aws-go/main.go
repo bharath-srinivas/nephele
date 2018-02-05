@@ -10,6 +10,7 @@ import (
 	_ "github.com/bharath-srinivas/aws-go/cmd/aws-go/env"
 	_ "github.com/bharath-srinivas/aws-go/cmd/aws-go/lambda"
 	_ "github.com/bharath-srinivas/aws-go/cmd/aws-go/rds"
+	_ "github.com/bharath-srinivas/aws-go/cmd/aws-go/s3"
 	_ "github.com/bharath-srinivas/aws-go/cmd/aws-go/upgrade"
 	_ "github.com/bharath-srinivas/aws-go/cmd/aws-go/version"
 )
