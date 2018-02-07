@@ -17,8 +17,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/lambda/lambdaiface"
 	"github.com/aws/aws-sdk-go/service/rds"
 	"github.com/aws/aws-sdk-go/service/rds/rdsiface"
-	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/aws/aws-sdk-go/service/s3/s3iface"
 
 	"github.com/bharath-srinivas/aws-go/store"
 	"github.com/bharath-srinivas/aws-go/utils"
@@ -86,18 +84,6 @@ type RDS struct {
 type RDSService struct {
 	RDS
 	Service rdsiface.RDSAPI
-}
-
-// S3 represents the S3 bucket fields.
-type S3 struct {
-	Name         string // S3 bucket name
-	CreationDate string // S3 bucket creation date
-}
-
-// S3Service represents the S3 interface.
-type S3Service struct {
-	S3
-	Service s3iface.S3API
 }
 
 // NewSession returns an instance of AWS Session.
@@ -288,12 +274,6 @@ func (r *RDSService) GetRDSInstances() ([][]string, error) {
 		result = append(result, rdsList)
 	}
 	return result, nil
-}
-
-// GetBuckets returns the list of all the S3 buckets.
-func (s *S3Service) GetBuckets() (*s3.ListBucketsOutput, error) {
-	params := &s3.ListBucketsInput{}
-	return s.Service.ListBuckets(params)
 }
 
 // getInstanceName is a helper function which will return the instance name from the given tag list.

@@ -342,15 +342,3 @@ Listing the RDS instances in a table:
 ```bash
 $ aws-go rds list
 ```
-
-### Listing S3 buckets
-
-Aws Go lists all buckets with their name and creation date in an ascii table.
-
-#### Example
-
-Listing the S3 buckets in a table:
-
-```bash
-$ aws-go s3 list
-```
