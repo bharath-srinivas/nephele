@@ -30,9 +30,11 @@ var Session *session.Session
 
 // Main command.
 var Command = &cobra.Command{
-	Use:  "aws-go",
-	Long: description,
-	RunE: run,
+	Use:           "aws-go",
+	Long:          description,
+	RunE:          run,
+	SilenceUsage:  true,
+	SilenceErrors: true,
 }
 
 func AddCommand(cmd *cobra.Command) {

@@ -13,7 +13,7 @@ var upgradeCmd = &cobra.Command{
 	Use:     "upgrade",
 	Short:   "Upgrade aws-go to the latest version",
 	Args:    cobra.NoArgs,
-	Example: "aws-go upgrade",
+	Example: "  aws-go upgrade",
 	RunE:    doUpgrade,
 }
 
