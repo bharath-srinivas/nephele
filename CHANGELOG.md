@@ -1,3 +1,20 @@
+# v0.3.0 (2018-02-12)
+
+* added functionality to list based on filters
+* added functionality to start or stop multiple instances
+* added ec2 subcommand. Closes #4
+* added unit tests for store
+* added mocks for testing
+* chore: added prerun hooks
+* Fixes #5: added functionality to list s3 buckets
+* fixed weird whitespace caused by word wrap function
+* fixed: silence usage on errors. Closes #6
+* fixed verb for bool type
+* fixed import errors
+* refactored store to be unit testable
+* refactored functions to accommodate unit testing
+* refactored: directory structure
+
 # v0.2.1 (2018-01-26)
 
 * added word wrap utility function. Closes #2

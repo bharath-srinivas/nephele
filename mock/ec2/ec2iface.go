@@ -4523,6 +4523,50 @@ func (mr *MockEC2APIMockRecorder) DescribeAddressesWithContext(arg0, arg1 interf
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DescribeAddressesWithContext", reflect.TypeOf((*MockEC2API)(nil).DescribeAddressesWithContext), varargs...)
 }
 
+// DescribeAggregateIdFormat mocks base method
+func (m *MockEC2API) DescribeAggregateIdFormat(arg0 *ec2.DescribeAggregateIdFormatInput) (*ec2.DescribeAggregateIdFormatOutput, error) {
+	ret := m.ctrl.Call(m, "DescribeAggregateIdFormat", arg0)
+	ret0, _ := ret[0].(*ec2.DescribeAggregateIdFormatOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DescribeAggregateIdFormat indicates an expected call of DescribeAggregateIdFormat
+func (mr *MockEC2APIMockRecorder) DescribeAggregateIdFormat(arg0 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DescribeAggregateIdFormat", reflect.TypeOf((*MockEC2API)(nil).DescribeAggregateIdFormat), arg0)
+}
+
+// DescribeAggregateIdFormatRequest mocks base method
+func (m *MockEC2API) DescribeAggregateIdFormatRequest(arg0 *ec2.DescribeAggregateIdFormatInput) (*request.Request, *ec2.DescribeAggregateIdFormatOutput) {
+	ret := m.ctrl.Call(m, "DescribeAggregateIdFormatRequest", arg0)
+	ret0, _ := ret[0].(*request.Request)
+	ret1, _ := ret[1].(*ec2.DescribeAggregateIdFormatOutput)
+	return ret0, ret1
+}
+
+// DescribeAggregateIdFormatRequest indicates an expected call of DescribeAggregateIdFormatRequest
+func (mr *MockEC2APIMockRecorder) DescribeAggregateIdFormatRequest(arg0 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DescribeAggregateIdFormatRequest", reflect.TypeOf((*MockEC2API)(nil).DescribeAggregateIdFormatRequest), arg0)
+}
+
+// DescribeAggregateIdFormatWithContext mocks base method
+func (m *MockEC2API) DescribeAggregateIdFormatWithContext(arg0 aws.Context, arg1 *ec2.DescribeAggregateIdFormatInput, arg2 ...request.Option) (*ec2.DescribeAggregateIdFormatOutput, error) {
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "DescribeAggregateIdFormatWithContext", varargs...)
+	ret0, _ := ret[0].(*ec2.DescribeAggregateIdFormatOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DescribeAggregateIdFormatWithContext indicates an expected call of DescribeAggregateIdFormatWithContext
+func (mr *MockEC2APIMockRecorder) DescribeAggregateIdFormatWithContext(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DescribeAggregateIdFormatWithContext", reflect.TypeOf((*MockEC2API)(nil).DescribeAggregateIdFormatWithContext), varargs...)
+}
+
 // DescribeAvailabilityZones mocks base method
 func (m *MockEC2API) DescribeAvailabilityZones(arg0 *ec2.DescribeAvailabilityZonesInput) (*ec2.DescribeAvailabilityZonesOutput, error) {
 	ret := m.ctrl.Call(m, "DescribeAvailabilityZones", arg0)
@@ -6280,6 +6324,50 @@ func (m *MockEC2API) DescribePrefixListsWithContext(arg0 aws.Context, arg1 *ec2.
 func (mr *MockEC2APIMockRecorder) DescribePrefixListsWithContext(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DescribePrefixListsWithContext", reflect.TypeOf((*MockEC2API)(nil).DescribePrefixListsWithContext), varargs...)
+}
+
+// DescribePrincipalIdFormat mocks base method
+func (m *MockEC2API) DescribePrincipalIdFormat(arg0 *ec2.DescribePrincipalIdFormatInput) (*ec2.DescribePrincipalIdFormatOutput, error) {
+	ret := m.ctrl.Call(m, "DescribePrincipalIdFormat", arg0)
+	ret0, _ := ret[0].(*ec2.DescribePrincipalIdFormatOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DescribePrincipalIdFormat indicates an expected call of DescribePrincipalIdFormat
+func (mr *MockEC2APIMockRecorder) DescribePrincipalIdFormat(arg0 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DescribePrincipalIdFormat", reflect.TypeOf((*MockEC2API)(nil).DescribePrincipalIdFormat), arg0)
+}
+
+// DescribePrincipalIdFormatRequest mocks base method
+func (m *MockEC2API) DescribePrincipalIdFormatRequest(arg0 *ec2.DescribePrincipalIdFormatInput) (*request.Request, *ec2.DescribePrincipalIdFormatOutput) {
+	ret := m.ctrl.Call(m, "DescribePrincipalIdFormatRequest", arg0)
+	ret0, _ := ret[0].(*request.Request)
+	ret1, _ := ret[1].(*ec2.DescribePrincipalIdFormatOutput)
+	return ret0, ret1
+}
+
+// DescribePrincipalIdFormatRequest indicates an expected call of DescribePrincipalIdFormatRequest
+func (mr *MockEC2APIMockRecorder) DescribePrincipalIdFormatRequest(arg0 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DescribePrincipalIdFormatRequest", reflect.TypeOf((*MockEC2API)(nil).DescribePrincipalIdFormatRequest), arg0)
+}
+
+// DescribePrincipalIdFormatWithContext mocks base method
+func (m *MockEC2API) DescribePrincipalIdFormatWithContext(arg0 aws.Context, arg1 *ec2.DescribePrincipalIdFormatInput, arg2 ...request.Option) (*ec2.DescribePrincipalIdFormatOutput, error) {
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "DescribePrincipalIdFormatWithContext", varargs...)
+	ret0, _ := ret[0].(*ec2.DescribePrincipalIdFormatOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DescribePrincipalIdFormatWithContext indicates an expected call of DescribePrincipalIdFormatWithContext
+func (mr *MockEC2APIMockRecorder) DescribePrincipalIdFormatWithContext(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DescribePrincipalIdFormatWithContext", reflect.TypeOf((*MockEC2API)(nil).DescribePrincipalIdFormatWithContext), varargs...)
 }
 
 // DescribeRegions mocks base method

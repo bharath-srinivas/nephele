@@ -41,8 +41,8 @@
     "service/s3/s3iface",
     "service/sts"
   ]
-  revision = "1b176c5c6b57adb03bb982c21930e708ebca5a77"
-  version = "v1.12.70"
+  revision = "82eadef012f77590875babb177c60878727821c0"
+  version = "v1.12.74"
 
 [[projects]]
   name = "github.com/go-ini/ini"
@@ -133,6 +133,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "140b35104205cdf65c5c6e3b1f82c74ad42cfbf72d8dfc76d2aeea8d9f5d35ca"
+  inputs-digest = "83b373a125e375d32b6a06e337d123694ef842473e82bd40880cd9c86dc48ccf"
   solver-name = "gps-cdcl"
   solver-version = 1
