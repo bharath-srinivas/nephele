@@ -27,7 +27,7 @@ func init() {
 func printVersion(cmd *cobra.Command, args []string) {
 	fmt.Println("aws-go:")
 	fmt.Println(" version 	:", Version)
-	fmt.Println(" build date	: 2018-01-26")
+	fmt.Println(" build date	: 2018-02-12")
 	fmt.Println(" go version	:", runtime.Version())
 	fmt.Println(" platform	:", runtime.GOOS+"/"+runtime.GOARCH)
 }
