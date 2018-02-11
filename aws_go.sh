@@ -153,12 +153,15 @@ __handle_flag()
     fi
 
     # keep flag value with flagname as flaghash
-    if [ -n "${flagvalue}" ] ; then
-        flaghash[${flagname}]=${flagvalue}
-    elif [ -n "${words[ $((c+1)) ]}" ] ; then
-        flaghash[${flagname}]=${words[ $((c+1)) ]}
-    else
-        flaghash[${flagname}]="true" # pad "true" for bool flag
+    # flaghash variable is an associative array which is only supported in bash > 3.
+    if [[ -z "${BASH_VERSION}" || "${BASH_VERSINFO[0]}" -gt 3 ]]; then
+        if [ -n "${flagvalue}" ] ; then
+            flaghash[${flagname}]=${flagvalue}
+        elif [ -n "${words[ $((c+1)) ]}" ] ; then
+            flaghash[${flagname}]=${words[ $((c+1)) ]}
+        else
+            flaghash[${flagname}]="true" # pad "true" for bool flag
+        fi
     fi
 
     # skip the argument to a two word flag
@@ -224,6 +227,90 @@ __handle_word()
         __handle_noun
     fi
     __handle_word
+}
+
+_aws-go_ec2_list()
+{
+    last_command="aws-go_ec2_list"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--all")
+    flags+=("-a")
+    local_nonpersistent_flags+=("--all")
+    flags+=("--filters=")
+    two_word_flags+=("-f")
+    local_nonpersistent_flags+=("--filters=")
+    flags+=("--filters-file=")
+    two_word_flags+=("-F")
+    local_nonpersistent_flags+=("--filters-file=")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
+_aws-go_ec2_start()
+{
+    last_command="aws-go_ec2_start"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--dry-run")
+    local_nonpersistent_flags+=("--dry-run")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
+_aws-go_ec2_stop()
+{
+    last_command="aws-go_ec2_stop"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--dry-run")
+    local_nonpersistent_flags+=("--dry-run")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
+_aws-go_ec2()
+{
+    last_command="aws-go_ec2"
+    commands=()
+    commands+=("list")
+    commands+=("start")
+    commands+=("stop")
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
 }
 
 _aws-go_env_create()
@@ -350,23 +437,6 @@ _aws-go_lambda()
     noun_aliases=()
 }
 
-_aws-go_list()
-{
-    last_command="aws-go_list"
-    commands=()
-
-    flags=()
-    two_word_flags=()
-    local_nonpersistent_flags=()
-    flags_with_completion=()
-    flags_completion=()
-
-
-    must_have_one_flag=()
-    must_have_one_noun=()
-    noun_aliases=()
-}
-
 _aws-go_rds_list()
 {
     last_command="aws-go_rds_list"
@@ -402,9 +472,9 @@ _aws-go_rds()
     noun_aliases=()
 }
 
-_aws-go_start()
+_aws-go_s3_list()
 {
-    last_command="aws-go_start"
+    last_command="aws-go_s3_list"
     commands=()
 
     flags=()
@@ -413,18 +483,17 @@ _aws-go_start()
     flags_with_completion=()
     flags_completion=()
 
-    flags+=("--dry-run")
-    local_nonpersistent_flags+=("--dry-run")
 
     must_have_one_flag=()
     must_have_one_noun=()
     noun_aliases=()
 }
 
-_aws-go_stop()
+_aws-go_s3()
 {
-    last_command="aws-go_stop"
+    last_command="aws-go_s3"
     commands=()
+    commands+=("list")
 
     flags=()
     two_word_flags=()
@@ -432,8 +501,6 @@ _aws-go_stop()
     flags_with_completion=()
     flags_completion=()
 
-    flags+=("--dry-run")
-    local_nonpersistent_flags+=("--dry-run")
 
     must_have_one_flag=()
     must_have_one_noun=()
@@ -478,12 +545,11 @@ _aws-go()
 {
     last_command="aws-go"
     commands=()
+    commands+=("ec2")
     commands+=("env")
     commands+=("lambda")
-    commands+=("list")
     commands+=("rds")
-    commands+=("start")
-    commands+=("stop")
+    commands+=("s3")
     commands+=("upgrade")
     commands+=("version")
 

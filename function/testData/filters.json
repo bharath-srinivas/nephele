@@ -1,0 +1,10 @@
+[
+  {
+    "name": "name",
+    "values": ["web"]
+  },
+  {
+    "name": "az",
+    "values": ["us-east-1d"]
+  }
+]

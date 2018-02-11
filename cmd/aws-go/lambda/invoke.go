@@ -39,7 +39,7 @@ func invokeFunction(cmd *cobra.Command, args []string) error {
 		Name: args[0],
 	}
 
-	lambdaService := function.LambdaService{
+	lambdaService := &function.LambdaService{
 		Function: functionName,
 		Service:  sess,
 	}

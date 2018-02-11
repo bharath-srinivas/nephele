@@ -5,14 +5,13 @@
 
 AWS Go is a CLI tool for managing [AWS](https://aws.amazon.com) services without the need
 to login to the AWS console, built to be fast and easy to use. Currently AWS Go supports services like
-EC2, Lambda and RDS only. Support for more services will be added later.
+EC2, Lambda, RDS etc.
 
 ## Installation
 
-Currently AWS Go is available only for Linux amd64 architecture. Support for other operating systems and 
-architectures will be added later once the tool is stable.
+Currently AWS Go is available only for linux and windows. Support for other operating systems will be added later.
 
-On Linux run the following command to install aws-go:
+On linux run the following command to install aws-go:
 
 ```
 curl -sL https://raw.githubusercontent.com/bharath-srinivas/aws-go/master/setup_aws_go | sudo -E bash -
@@ -23,6 +22,8 @@ If already installed, upgrade with:
 ```bash
 $ sudo aws-go upgrade
 ```
+
+For windows, download the binary from [here](https://github.com/bharath-srinivas/aws-go/releases).
 
 ## AWS credentials
 
@@ -211,6 +212,12 @@ Note that every filter is case insensitive:
 * `state` instance state
 * `type` instance type
 * `az` availability zone of the instance
+
+#### Precedence:
+The precedence for loading filters is:
+
+* filters from the flag
+* filters from JSON file
 
 #### Example filters file:
      

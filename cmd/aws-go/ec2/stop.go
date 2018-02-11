@@ -15,8 +15,8 @@ import (
 var stopCmd = &cobra.Command{
 	Use:     "stop [instance id]",
 	Short:   "Stop the specified EC2 instance",
-	Args:    cobra.ExactArgs(1),
-	Example: "aws-go stop i-0a12b345c678de",
+	Args:    cobra.MinimumNArgs(1),
+	Example: "  aws-go stop i-0a12b345c678de",
 	PreRun:  command.PreRun,
 	RunE:    stopInstance,
 }
@@ -33,7 +33,7 @@ func stopInstance(cmd *cobra.Command, args []string) error {
 	sess := ec2.New(command.Session)
 
 	instanceId := function.EC2{
-		ID: args[0],
+		IDs: args,
 	}
 
 	ec2Service := &function.EC2Service{
@@ -41,16 +41,18 @@ func stopInstance(cmd *cobra.Command, args []string) error {
 		Service: sess,
 	}
 
-	resp, err := ec2Service.StopInstance(dryRun)
+	resp, err := ec2Service.StopInstances(dryRun)
 	if err != nil {
 		sp.Stop()
 		return err
 	}
 
-	previousState := *resp.StoppingInstances[0].PreviousState.Name
-	currentState := *resp.StoppingInstances[0].CurrentState.Name
 	sp.Stop()
-	fmt.Println("Previous State: " + previousState + "\nCurrent State: " + currentState)
+	for _, data := range resp.StoppingInstances {
+		fmt.Println("Previous State(" + *data.InstanceId + ") : " + *data.PreviousState.Name)
+		fmt.Println("Current State(" + *data.InstanceId + ")  : " + *data.CurrentState.Name)
+		fmt.Printf("\n")
+	}
 
 	return nil
 }

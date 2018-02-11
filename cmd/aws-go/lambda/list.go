@@ -33,7 +33,7 @@ func listFunctions(cmd *cobra.Command, args []string) error {
 	sp.Start()
 	sess := lambda.New(command.Session)
 
-	lambdaService := function.LambdaService{
+	lambdaService := &function.LambdaService{
 		Service: sess,
 	}
 
