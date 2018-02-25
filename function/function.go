@@ -94,9 +94,17 @@ type S3 struct {
 	CreationDate string // S3 bucket creation date
 }
 
+// S3Options represents the optional arguments for S3.
+type S3Options struct {
+	ContinuationToken string // Continuation token for fetching previous or next set of records
+	MaxCount          int64  // Maximum objects to fetch per request
+	Prefix            string // Prefix of the S3 objects
+}
+
 // S3Service represents the S3 interface.
 type S3Service struct {
 	S3
+	S3Options
 	Service s3iface.S3API
 }
 
@@ -304,6 +312,24 @@ func (r *RDSService) GetRDSInstances() ([][]string, error) {
 func (s *S3Service) GetBuckets() (*s3.ListBucketsOutput, error) {
 	params := &s3.ListBucketsInput{}
 	return s.Service.ListBuckets(params)
+}
+
+// GetObjects returns the list of all the S3 objects from the specified bucket.
+func (s *S3Service) GetObjects() (*s3.ListObjectsV2Output, error) {
+	var params *s3.ListObjectsV2Input
+	params = &s3.ListObjectsV2Input{
+		Bucket:  aws.String(s.Name),
+		MaxKeys: aws.Int64(s.MaxCount),
+	}
+
+	if s.Prefix != "" {
+		params.Prefix = aws.String(s.Prefix)
+	}
+
+	if s.ContinuationToken != "" {
+		params.ContinuationToken = aws.String(s.ContinuationToken)
+	}
+	return s.Service.ListObjectsV2(params)
 }
 
 // getInstanceName is a helper function which will return the instance name from the given tag list.
