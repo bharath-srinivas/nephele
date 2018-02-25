@@ -361,3 +361,32 @@ Listing the S3 buckets in a table:
 ```bash
 $ aws-go s3 list
 ```
+
+### Listing S3 objects
+
+To list all the S3 objects present in a bucket, just specify the `bucket name` along with the `list` command. This will
+render the list of S3 objects in a pager so that you can perform operations like search, scroll through the list etc.
+
+#### Example
+
+To list the S3 objects in a bucket:
+
+```bash
+$ aws-go s3 list test-bucket
+```
+
+To list the next set or previous set of objects in a bucket:
+
+```bash
+$ aws-go s3 list test-bucket -t [token]
+```
+
+You'll get this token string from the pager.
+
+To list more objects than the default limit of 100:
+
+```bash
+$ aws-go s3 list test-bucket -c 500
+```
+
+Note that the maximum number of objects you can fetch per request is limited to `1000`.

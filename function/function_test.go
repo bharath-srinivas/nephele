@@ -296,3 +296,26 @@ func TestS3Service_GetBuckets(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestS3Service_GetObjects(t *testing.T) {
+	mockController := gomock.NewController(t)
+	defer mockController.Finish()
+
+	s3ServiceMock := mock_s3iface.NewMockS3API(mockController)
+
+	params := &s3.ListObjectsV2Input{
+		Bucket:  aws.String(""),
+		MaxKeys: aws.Int64(0),
+	}
+	s3ServiceMock.EXPECT().ListObjectsV2(params).Return(&s3.ListObjectsV2Output{}, nil)
+
+	s3Service := &S3Service{
+		Service: s3ServiceMock,
+	}
+
+	_, err := s3Service.GetObjects()
+
+	if err != nil {
+		t.Fail()
+	}
+}

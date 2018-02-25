@@ -1,7 +1,11 @@
 package s3
 
 import (
+	"fmt"
 	"os"
+	"os/exec"
+	"strconv"
+	"text/tabwriter"
 
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/olekukonko/tablewriter"
@@ -12,22 +16,60 @@ import (
 	"github.com/bharath-srinivas/aws-go/internal/spinner"
 )
 
+// continuation token for the bucket.
+var token string
+
+// page size for s3 objects.
+var maxCount int64
+
+// prefix of the s3 objects.
+var prefix string
+
 // s3 list command.
 var listCmd = &cobra.Command{
-	Use:     "list",
-	Short:   "List all the available S3 buckets",
-	Args:    cobra.NoArgs,
-	Example: `  aws-go s3 list`,
-	PreRun:  command.PreRun,
-	RunE:    list,
+	Use:   "list [Bucket name]",
+	Short: "List all the available S3 buckets or objects in a bucket",
+	Args:  cobra.MaximumNArgs(1),
+	Example: `To list S3 buckets:  
+  aws-go s3 list
+
+To list S3 objects in a bucket:
+  aws-go s3 list [bucket-name]
+
+For fetching more objects than the default limit:
+  aws-go s3 list [bucket-name] -c <count>
+
+For fetching the next set of objects in a bucket:
+  aws-go s3 list [bucket-name] -t <token>
+
+Note: Maximum number of objects you can fetch per request is limited to 1000`,
+	PreRun: command.PreRun,
+	RunE:   list,
 }
 
 func init() {
 	s3Cmd.AddCommand(listCmd)
+	listCmd.Flags().StringVarP(&token, "token", "t", "", "the token for fetching the next or previous set of s3 objects")
+	listCmd.Flags().Int64VarP(&maxCount, "count", "c", 100, "number of objects to fetch per request")
+	listCmd.Flags().StringVarP(&prefix, "prefix", "p", "", "search for s3 objects containing specified prefix")
 }
 
 // run command.
 func list(cmd *cobra.Command, args []string) error {
+	if len(args) > 0 {
+		if err := listObjects(args); err != nil {
+			return err
+		}
+	} else {
+		if err := listBuckets(); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// list s3 buckets.
+func listBuckets() error {
 	sp := spinner.Default(spinner.Prefix[1])
 	sp.Start()
 
@@ -58,6 +100,73 @@ func list(cmd *cobra.Command, args []string) error {
 	}
 	sp.Stop()
 	table.Render()
+
+	return nil
+}
+
+// list s3 objects in a bucket.
+func listObjects(args []string) error {
+	sp := spinner.Default(spinner.Prefix[1])
+	sp.Start()
+
+	cmdPath, err := exec.LookPath("less")
+	if err != nil {
+		cmdPath, err = exec.LookPath("more")
+		if err != nil {
+			return err
+		}
+	}
+
+	pager := exec.Command(cmdPath)
+	stdin, _ := pager.StdinPipe()
+	pager.Stdout = os.Stdout
+
+	sess := s3.New(command.Session)
+	bucketName := function.S3{
+		Name: args[0],
+	}
+
+	var options function.S3Options
+	options.MaxCount = maxCount
+	if token != "" {
+		options.ContinuationToken = token
+	}
+
+	if prefix != "" {
+		options.Prefix = prefix
+	}
+
+	s3Service := &function.S3Service{
+		S3:        bucketName,
+		S3Options: options,
+		Service:   sess,
+	}
+
+	resp, err := s3Service.GetObjects()
+	if err != nil {
+		sp.Stop()
+		return err
+	}
+
+	writer := tabwriter.NewWriter(stdin, 0, 0, 2, ' ', 0)
+	for _, object := range resp.Contents {
+		fmt.Fprintln(writer, object.LastModified.String()+"\t"+strconv.Itoa(int(*object.Size))+"\t"+
+			*object.Key)
+	}
+	writer.Flush()
+
+	stdin.Write([]byte("\n\nTotal Objects: " + strconv.Itoa(int(*resp.KeyCount))))
+	if resp.ContinuationToken != nil {
+		stdin.Write([]byte("\nToken for fetching the previous set of objects: " + *resp.ContinuationToken))
+	}
+
+	if resp.NextContinuationToken != nil {
+		stdin.Write([]byte("\nToken for fetching the next set of objects: " + *resp.NextContinuationToken))
+	}
+	stdin.Close()
+
+	sp.Stop()
+	pager.Run()
 
 	return nil
 }
