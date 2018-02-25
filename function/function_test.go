@@ -40,9 +40,7 @@ func TestEC2Service_GetAllInstances(t *testing.T) {
 		Service: ec2ServiceMock,
 	}
 
-	_, err := ec2Service.GetAllInstances()
-
-	if err != nil {
+	if _, err := ec2Service.GetAllInstances(); err != nil {
 		t.Fail()
 	}
 }
@@ -171,9 +169,7 @@ func TestEC2Service_StartInstances(t *testing.T) {
 		Service: ec2ServiceMock,
 	}
 
-	_, err := ec2Service.StartInstances(false)
-
-	if err != nil {
+	if _, err := ec2Service.StartInstances(false); err != nil {
 		t.Fail()
 	}
 }
@@ -200,9 +196,7 @@ func TestEC2Service_StopInstances(t *testing.T) {
 		Service: ec2ServiceMock,
 	}
 
-	_, err := ec2Service.StopInstances(false)
-
-	if err != nil {
+	if _, err := ec2Service.StopInstances(false); err != nil {
 		t.Fail()
 	}
 }
@@ -220,9 +214,7 @@ func TestLambdaService_GetFunctions(t *testing.T) {
 		Service: lambdaServiceMock,
 	}
 
-	_, err := lambdaService.GetFunctions()
-
-	if err != nil {
+	if _, err := lambdaService.GetFunctions(); err != nil {
 		t.Fail()
 	}
 }
@@ -248,9 +240,7 @@ func TestLambdaService_InvokeFunction(t *testing.T) {
 		Service:  lambdaServiceMock,
 	}
 
-	_, err := lambdaService.InvokeFunction()
-
-	if err != nil {
+	if _, err := lambdaService.InvokeFunction(); err != nil {
 		t.Fail()
 	}
 }
@@ -290,9 +280,7 @@ func TestS3Service_GetBuckets(t *testing.T) {
 		Service: s3ServiceMock,
 	}
 
-	_, err := s3Service.GetBuckets()
-
-	if err != nil {
+	if _, err := s3Service.GetBuckets(); err != nil {
 		t.Fail()
 	}
 }
@@ -313,9 +301,7 @@ func TestS3Service_GetObjects(t *testing.T) {
 		Service: s3ServiceMock,
 	}
 
-	_, err := s3Service.GetObjects()
-
-	if err != nil {
+	if _, err := s3Service.GetObjects(); err != nil {
 		t.Fail()
 	}
 }

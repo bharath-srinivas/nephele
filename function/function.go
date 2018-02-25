@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"os"
 	"strconv"
 	"strings"
 
@@ -19,6 +20,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/rds/rdsiface"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3iface"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager/s3manageriface"
 
 	"github.com/bharath-srinivas/aws-go/store"
 	"github.com/bharath-srinivas/aws-go/utils"
@@ -101,9 +103,17 @@ type S3Options struct {
 	Prefix            string // Prefix of the S3 objects
 }
 
+// S3Downloader represents the Downloader interface.
+type S3Downloader struct {
+	FileName   string // The file to write the contents of the s3 object.
+	Key        string // The S3 object key.
+	Downloader s3manageriface.DownloaderAPI
+}
+
 // S3Service represents the S3 interface.
 type S3Service struct {
 	S3
+	S3Downloader
 	S3Options
 	Service s3iface.S3API
 }
@@ -330,6 +340,20 @@ func (s *S3Service) GetObjects() (*s3.ListObjectsV2Output, error) {
 		params.ContinuationToken = aws.String(s.ContinuationToken)
 	}
 	return s.Service.ListObjectsV2(params)
+}
+
+// DownloadObject downloads a single S3 object from a bucket to the specified location on the system.
+func (s *S3Service) DownloadObject() (int64, error) {
+	file, err := os.Create(s.FileName)
+	if err != nil {
+		return 0, err
+	}
+
+	params := &s3.GetObjectInput{
+		Bucket: aws.String(s.Name),
+		Key:    aws.String(s.Key),
+	}
+	return s.Downloader.Download(file, params)
 }
 
 // getInstanceName is a helper function which will return the instance name from the given tag list.
