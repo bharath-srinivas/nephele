@@ -20,6 +20,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/rds/rdsiface"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3iface"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager/s3manageriface"
 
 	"github.com/bharath-srinivas/aws-go/store"
@@ -40,12 +41,7 @@ var filterMap = map[string]string{
 
 // EC2 represents the AWS EC2 instance fields.
 type EC2 struct {
-	Name         string   // Name of the EC2 instance
-	IDs          []string // List of EC2 instance IDs
-	State        string   // Current State of the EC2 instance
-	PrivateIP    string   // Private IP address of the EC2 instance
-	PublicIP     string   // Public/Elastic IP address of the EC2 instance
-	InstanceType string   // EC2 instance type
+	IDs []string // List of EC2 instance IDs
 }
 
 // EC2Service represents the EC2 interface.
@@ -57,14 +53,7 @@ type EC2Service struct {
 
 // Function represents the Lambda function fields.
 type Function struct {
-	Name        string // Name of the Lambda function
-	Description string // Description provided for the Lambda function, if any
-	Runtime     string // Runtime of the Lambda function
-	Memory      int64  // Memory allocated for the Lambda function
-	Timeout     int64  // Timeout set for the Lambda function
-	Handler     string // Lambda function handler
-	Role        string // IAM role assigned for the Lambda function
-	Version     string // Version of the Lambda function
+	Name string // Name of the Lambda function
 }
 
 // LambdaService represents the Lambda interface.
@@ -73,27 +62,17 @@ type LambdaService struct {
 	Service lambdaiface.LambdaAPI
 }
 
-// RDS represents the RDS instance fields.
-type RDS struct {
-	InstanceID    string // RDS instance ID
-	Status        string // Current status of the RDS instance
-	Endpoint      string // Endpoint of the RDS instance
-	InstanceClass string // RDS instance class
-	Engine        string // RDS engine
-	EngineVersion string // RDS engine version
-	MultiAZ       bool   // Multi-AZ availability of the RDS instance
-}
-
 // RDSService represents the RDS interface.
 type RDSService struct {
-	RDS
 	Service rdsiface.RDSAPI
 }
 
 // S3 represents the S3 bucket fields.
 type S3 struct {
-	Name         string // S3 bucket name
-	CreationDate string // S3 bucket creation date
+	Name       string `json:"bucket_name"` // S3 bucket name
+	Key        string `json:"object_name"` // The S3 object key.
+	FileName   string `json:"file_name"`   // The file to write the contents of the s3 object.
+	Downloader s3manageriface.DownloaderAPI
 }
 
 // S3Options represents the optional arguments for S3.
@@ -103,17 +82,9 @@ type S3Options struct {
 	Prefix            string // Prefix of the S3 objects
 }
 
-// S3Downloader represents the Downloader interface.
-type S3Downloader struct {
-	FileName   string // The file to write the contents of the s3 object.
-	Key        string // The S3 object key.
-	Downloader s3manageriface.DownloaderAPI
-}
-
 // S3Service represents the S3 interface.
 type S3Service struct {
 	S3
-	S3Downloader
 	S3Options
 	Service s3iface.S3API
 }
@@ -121,7 +92,6 @@ type S3Service struct {
 // NewSession returns an instance of AWS Session.
 func NewSession() *session.Session {
 	userCreds := store.GetCredentials()
-
 	creds := credentials.NewStaticCredentialsFromCreds(credentials.Value{
 		AccessKeyID:     userCreds.AccessId,
 		SecretAccessKey: userCreds.SecretKey})
@@ -129,7 +99,6 @@ func NewSession() *session.Session {
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		Config: aws.Config{Credentials: creds, Region: aws.String(userCreds.Region)},
 	}))
-
 	return sess
 }
 
@@ -222,8 +191,8 @@ func (e *EC2Service) GetInstances() ([][]string, error) {
 
 	var result [][]string
 	for _, i := range resp.Reservations {
-		var ec2List []string
 		for _, t := range i.Instances {
+			var ec2List []string
 			if *t.State.Name == "terminated" {
 				continue
 			}
@@ -238,8 +207,8 @@ func (e *EC2Service) GetInstances() ([][]string, error) {
 			}
 
 			ec2List = append(ec2List, *t.InstanceId, *t.State.Name, *t.PrivateIpAddress, publicIP, *t.InstanceType)
+			result = append(result, ec2List)
 		}
-		result = append(result, ec2List)
 	}
 	return result, nil
 }
@@ -354,6 +323,43 @@ func (s *S3Service) DownloadObject() (int64, error) {
 		Key:    aws.String(s.Key),
 	}
 	return s.Downloader.Download(file, params)
+}
+
+// MultiObjectDownload will parse the provided json file containing list of objects and downloads the S3 objects
+// provided in the file concurrently in batch into the file names provided in the json file.
+func (s *S3Service) MultiObjectDownload(objectsFile string) error {
+	var objectSlice []S3
+	fileContent, err := ioutil.ReadFile(objectsFile)
+	if err != nil {
+		return err
+	}
+
+	decoder := json.NewDecoder(strings.NewReader(string(fileContent)))
+	decoder.Decode(&objectSlice)
+
+	var objects []s3manager.BatchDownloadObject
+	for _, object := range objectSlice {
+		file, err := os.Create(object.FileName)
+		if err != nil {
+			return err
+		}
+
+		downloadObject := s3manager.BatchDownloadObject{
+			Object: &s3.GetObjectInput{
+				Bucket: aws.String(object.Name),
+				Key:    aws.String(object.Key),
+			},
+			Writer: file,
+		}
+		objects = append(objects, downloadObject)
+	}
+
+	downloader := s3manager.NewDownloaderWithClient(s.Service)
+	iterator := &s3manager.DownloadObjectsIterator{Objects: objects}
+	if err := downloader.DownloadWithIterator(aws.BackgroundContext(), iterator); err != nil {
+		return err
+	}
+	return nil
 }
 
 // getInstanceName is a helper function which will return the instance name from the given tag list.

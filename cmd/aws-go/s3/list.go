@@ -1,7 +1,7 @@
 package s3
 
 import (
-	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"strconv"
@@ -57,15 +57,9 @@ func init() {
 // run command.
 func list(cmd *cobra.Command, args []string) error {
 	if len(args) > 0 {
-		if err := listObjects(args); err != nil {
-			return err
-		}
-	} else {
-		if err := listBuckets(); err != nil {
-			return err
-		}
+		return listObjects(args)
 	}
-	return nil
+	return listBuckets()
 }
 
 // list s3 buckets.
@@ -100,7 +94,6 @@ func listBuckets() error {
 	}
 	sp.Stop()
 	table.Render()
-
 	return nil
 }
 
@@ -118,7 +111,10 @@ func listObjects(args []string) error {
 	}
 
 	pager := exec.Command(cmdPath)
-	stdin, _ := pager.StdinPipe()
+	stdin, err := pager.StdinPipe()
+	if err != nil {
+		return err
+	}
 	pager.Stdout = os.Stdout
 
 	sess := s3.New(command.Session)
@@ -149,24 +145,24 @@ func listObjects(args []string) error {
 	}
 
 	writer := tabwriter.NewWriter(stdin, 0, 0, 2, ' ', 0)
-	for _, object := range resp.Contents {
-		fmt.Fprintln(writer, object.LastModified.String()+"\t"+strconv.Itoa(int(*object.Size))+"\t"+
-			*object.Key)
-	}
-	writer.Flush()
+	go func() {
+		defer stdin.Close()
+		for _, object := range resp.Contents {
+			io.WriteString(writer, object.LastModified.String()+"\t"+strconv.Itoa(int(*object.Size))+"\t"+
+				*object.Key+"\n")
+		}
+		writer.Flush()
 
-	stdin.Write([]byte("\n\nTotal Objects: " + strconv.Itoa(int(*resp.KeyCount))))
-	if resp.ContinuationToken != nil {
-		stdin.Write([]byte("\nToken for fetching the previous set of objects: " + *resp.ContinuationToken))
-	}
+		io.WriteString(stdin, "\n\nTotal Objects: "+strconv.Itoa(int(*resp.KeyCount)))
+		if resp.ContinuationToken != nil {
+			io.WriteString(stdin, "\nToken for fetching the previous set of objects: "+*resp.ContinuationToken)
+		}
 
-	if resp.NextContinuationToken != nil {
-		stdin.Write([]byte("\nToken for fetching the next set of objects: " + *resp.NextContinuationToken))
-	}
-	stdin.Close()
-
+		if resp.NextContinuationToken != nil {
+			io.WriteString(stdin, "\nToken for fetching the next set of objects: "+*resp.NextContinuationToken)
+		}
+	}()
 	sp.Stop()
 	pager.Run()
-
 	return nil
 }

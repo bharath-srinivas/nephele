@@ -6,14 +6,13 @@ import (
 
 	"github.com/bharath-srinivas/aws-go/cmd/aws-go/command"
 	"github.com/spf13/cobra"
-	"time"
 )
 
 // current version.
 const Version = "v0.3.0"
 
 // build date.
-var buildDate = fmt.Sprintf("%d-%d-%d", time.Now().Year(), time.Now().Month(), time.Now().Day())
+const buildDate = "2018-03-03"
 
 // version command.
 var versionCmd = &cobra.Command{

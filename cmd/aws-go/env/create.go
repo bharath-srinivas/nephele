@@ -1,7 +1,8 @@
 package env
 
 import (
-	"os"
+	"errors"
+	"fmt"
 
 	"github.com/spf13/cobra"
 
@@ -12,8 +13,9 @@ import (
 var createCmd = &cobra.Command{
 	Use:     "create",
 	Short:   "Create a new AWS profile with specified region (if provided)",
+	Args:    cobra.NoArgs,
 	Example: "  aws-go env create --profile staging --region us-west-1",
-	Run:     createEnv,
+	RunE:    createEnv,
 }
 
 func init() {
@@ -23,10 +25,34 @@ func init() {
 }
 
 // env create run command.
-func createEnv(cmd *cobra.Command, args []string) {
+func createEnv(cmd *cobra.Command, args []string) error {
 	if store.Profile == "" {
-		cmd.Usage()
-		os.Exit(0)
+		return cmd.Usage()
 	}
-	store.SetCredentials()
+
+	db := store.NewSession()
+	defer db.Close()
+
+	if db.EntryExists(store.Profile) {
+		return errors.New("error: profile already exists")
+	}
+
+	var accessId string
+	var secretKey string
+	fmt.Print("AWS Access Key ID: ")
+	_, err := fmt.Scanln(&accessId)
+	if err != nil {
+		return err
+	}
+
+	fmt.Print("AWS Secret Access Key: ")
+	_, err1 := fmt.Scanln(&secretKey)
+	if err1 != nil {
+		return err1
+	}
+
+	db.SetCredentials(accessId, secretKey)
+	fmt.Printf("\nSuccessfully added new profile: %s\n", store.Profile)
+	fmt.Printf("Switched to '%s' with region '%s'\n", store.Profile, store.Region)
+	return nil
 }

@@ -1,7 +1,8 @@
 package env
 
 import (
-	"os"
+	"errors"
+	"fmt"
 
 	"github.com/spf13/cobra"
 
@@ -12,8 +13,9 @@ import (
 var useCmd = &cobra.Command{
 	Use:     "use",
 	Short:   "Use the specified AWS profile and region (if provided)",
+	Args:    cobra.NoArgs,
 	Example: "  aws-go env use --profile staging --region eu-west-1",
-	Run:     useEnv,
+	RunE:    useEnv,
 }
 
 func init() {
@@ -23,10 +25,19 @@ func init() {
 }
 
 // env use run command.
-func useEnv(cmd *cobra.Command, args []string) {
+func useEnv(cmd *cobra.Command, args []string) error {
 	if store.Profile == "" {
-		cmd.Usage()
-		os.Exit(0)
+		return cmd.Usage()
 	}
-	store.UseProfile()
+
+	db := store.NewSession()
+	defer db.Close()
+
+	if !db.EntryExists(store.Profile) {
+		return errors.New("error: no such profile found")
+	}
+
+	db.UseProfile()
+	fmt.Printf("Switched to '%s' with region '%s'\n", store.Profile, store.Region)
+	return nil
 }

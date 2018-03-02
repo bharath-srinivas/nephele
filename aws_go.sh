@@ -472,6 +472,26 @@ _aws-go_rds()
     noun_aliases=()
 }
 
+_aws-go_s3_download()
+{
+    last_command="aws-go_s3_download"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--objects-file=")
+    two_word_flags+=("-o")
+    local_nonpersistent_flags+=("--objects-file=")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
 _aws-go_s3_list()
 {
     last_command="aws-go_s3_list"
@@ -483,6 +503,15 @@ _aws-go_s3_list()
     flags_with_completion=()
     flags_completion=()
 
+    flags+=("--count=")
+    two_word_flags+=("-c")
+    local_nonpersistent_flags+=("--count=")
+    flags+=("--prefix=")
+    two_word_flags+=("-p")
+    local_nonpersistent_flags+=("--prefix=")
+    flags+=("--token=")
+    two_word_flags+=("-t")
+    local_nonpersistent_flags+=("--token=")
 
     must_have_one_flag=()
     must_have_one_noun=()
@@ -493,6 +522,7 @@ _aws-go_s3()
 {
     last_command="aws-go_s3"
     commands=()
+    commands+=("download")
     commands+=("list")
 
     flags=()

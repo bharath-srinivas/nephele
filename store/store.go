@@ -11,9 +11,6 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-// constant for string color wrapping
-const escape = "\x1b"
-
 var (
 	// AWS Profile.
 	Profile string
@@ -39,9 +36,9 @@ type store struct {
 	*sqlx.DB // an instance of sqlx DB
 }
 
-// newSession creates the config file required by aws-go to function, if not present and creates a new database
+// NewSession creates the config file required by aws-go to function, if not present and creates a new database
 // connection and returns a new store.
-func newSession() *store {
+func NewSession() *store {
 	usr, _ := user.Current()
 	homePath := usr.HomeDir
 
@@ -73,7 +70,6 @@ func newDBSession(configFile string) *sqlx.DB {
 			db.MustExec("INSERT INTO current_config (profile, region) VALUES (NULL, NULL)")
 		}
 	}
-
 	return db
 }
 
@@ -109,6 +105,5 @@ func cleanup() error {
 
 	configFileName := "aws_go_test.credentials"
 	configFile := path.Join(configPath, configFileName)
-
 	return os.Remove(configFile)
 }
