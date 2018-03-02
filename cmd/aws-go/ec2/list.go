@@ -46,16 +46,9 @@ func init() {
 // run command.
 func list(cmd *cobra.Command, args []string) error {
 	if listAll {
-		if err := listJSON(); err != nil {
-			return err
-		}
-	} else {
-		if err := listInstances(); err != nil {
-			return err
-		}
+		return listJSON()
 	}
-
-	return nil
+	return listInstances()
 }
 
 // list all instances in JSON format.
@@ -72,7 +65,6 @@ func listJSON() error {
 
 	result, _ := json.MarshalIndent(resp.Reservations, "", "    ")
 	fmt.Println(string(result))
-
 	return nil
 }
 
@@ -117,6 +109,5 @@ func listInstances() error {
 	table.AppendBulk(resp)
 	sp.Stop()
 	table.Render()
-
 	return nil
 }

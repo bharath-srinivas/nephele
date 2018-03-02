@@ -390,3 +390,53 @@ $ aws-go s3 list test-bucket -c 500
 ```
 
 Note that the maximum number of objects you can fetch per request is limited to `1000`.
+
+### Downloading S3 objects
+
+You can download either a single S3 object from a bucket or download multiple S3 objects from multiple buckets
+concurrently in batch. To download S3 objects in batch, you have to provide the list of objects you want to download in
+`JSON` file format to the `-o` flag.
+
+The file should contain the following keys and their respective values:
+* `bucket_name` the name of the S3 bucket
+* `object_name` the S3 object name
+* `file_name` the path to file name. The S3 object will be downloaded at this path with the provided file name
+
+#### Example objects file
+
+```json
+[
+  {
+    "bucket_name": "bucket-1",
+    "object_name": "object-1.png",
+    "file_name": "images/hello.png"
+  },
+  {
+    "bucket_name": "bucket-1/docs/",
+    "object_name": "hello.doc",
+    "file_name": "hello.doc"
+  }
+]
+```
+
+#### Example
+
+To download a S3 object:
+
+```bash
+$ aws-go s3 download test-bucket:test.png test.png
+```
+
+To download an object from sub directory of a bucket:
+
+```bash
+$ aws-go s3 download test-bucket/images/:hello.png hello.png
+```
+
+Note: Sub-directory name is case-sensitive and requires '/' at the end
+
+To download multiple objects concurrently:
+
+```bash
+$ aws-go s3 download -o objects-file.json
+```

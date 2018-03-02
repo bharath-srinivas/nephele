@@ -11,12 +11,12 @@ func TestSetCredentials(t *testing.T) {
 	Profile = "test"
 	Region = "us-east-1"
 
-	if ok := db.entryExists(Profile); ok {
+	if ok := db.EntryExists(Profile); ok {
 		t.Errorf("Unexpected error: profile exists: %t", ok)
 		return
 	}
 
-	if err := db.setCredentials("ThisIsATestAccessId123", "ThisIsATestSecretKey456"); err != nil {
+	if err := db.SetCredentials("ThisIsATestAccessId123", "ThisIsATestSecretKey456"); err != nil {
 		t.Errorf("SetCredentials returned an error: %s", err)
 	}
 }

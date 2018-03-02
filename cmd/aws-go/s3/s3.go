@@ -9,11 +9,14 @@ import (
 
 // s3 command.
 var s3Cmd = &cobra.Command{
-	Use:     "s3",
-	Short:   "Perform AWS S3 specific operations",
-	Long:    `List AWS S3 buckets`,
-	Example: `  aws-go s3 list`,
-	Args:    cobra.NoArgs,
+	Use:   "s3",
+	Short: "Perform AWS S3 specific operations",
+	Long:  `List AWS S3 buckets`,
+	Example: `  aws-go s3 list
+  aws-go s3 list [bucket-name]
+  aws-go s3 download [bucket-name:object-name] [dst-file-name]
+  aws-go s3 download -o objects.json`,
+	Args: cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Usage()
 	},

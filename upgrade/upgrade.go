@@ -54,7 +54,6 @@ func Upgrade(version string) error {
 		}
 
 	}
-
 	return nil
 }
 
@@ -72,7 +71,6 @@ func downloadRelease(release *github.RepositoryRelease, autoComp string) error {
 	}
 
 	scriptPath := filepath.Join("/etc/bash_completion.d", "aws_go.sh")
-
 	resp, err := http.Get(*assetInfo.BrowserDownloadURL)
 	if err != nil {
 		return err
@@ -108,7 +106,6 @@ func downloadRelease(release *github.RepositoryRelease, autoComp string) error {
 	}
 
 	progressBar.Finish()
-
 	scriptSrc := io.Reader(scriptResp.Body)
 	if _, err := io.Copy(tmpScriptFile, scriptSrc); err != nil {
 		return err
@@ -123,7 +120,6 @@ func downloadRelease(release *github.RepositoryRelease, autoComp string) error {
 	}
 
 	fmt.Println("\nVisit https://github.com/bharath-srinivas/aws-go/releases to read the changelog")
-
 	return nil
 }
 
@@ -136,6 +132,5 @@ func getAssetInfo(release *github.RepositoryRelease) *github.ReleaseAsset {
 			return &asset
 		}
 	}
-
 	return nil
 }
