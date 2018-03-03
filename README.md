@@ -402,7 +402,7 @@ The file should contain the following keys and their respective values:
 * `object_name` the S3 object name
 * `file_name` the path to file name. The S3 object will be downloaded at this path with the provided file name
 
-#### Example objects file
+#### Example objects file:
 
 ```json
 [

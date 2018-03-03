@@ -9,7 +9,7 @@ import (
 )
 
 // current version.
-const Version = "v0.3.0"
+const Version = "v0.4.0"
 
 // build date.
 const buildDate = "2018-03-03"

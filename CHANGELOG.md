@@ -1,3 +1,10 @@
+# v0.4.0 (2018-03-03)
+
+* added functionality to list s3 objects
+* added functionality to download a s3 object
+* added functionality to download s3 objects in batch
+* minor performance enhancements
+
 # v0.3.0 (2018-02-12)
 
 * added functionality to list based on filters
