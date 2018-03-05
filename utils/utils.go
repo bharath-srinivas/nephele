@@ -1,4 +1,4 @@
-// Package utils contains all the utility functions used by aws-go
+// Package utils contains all the utility functions used by nephele
 package utils
 
 import (

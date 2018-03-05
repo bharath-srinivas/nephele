@@ -1,17 +1,17 @@
 #!/bin/bash
 
-# Script to install the AWS GO onto a linux x86_64 System.
+# Script to install the Nephelê onto a linux x86_64 System.
 #
 # Run as root or insert `sudo -E` before `bash`:
 #
-# curl -sL https://raw.githubusercontent.com/bharath-srinivas/aws-go/master/setup_aws_go | bash -
+# curl -sL https://raw.githubusercontent.com/bharath-srinivas/nephele/master/setup_nephele | bash -
 # or
-# wget -qO- https://raw.githubusercontent.com/bharath-srinivas/aws-go/master/setup_aws_go | bash -
+# wget -qO- https://raw.githubusercontent.com/bharath-srinivas/nephele/master/setup_nephele | bash -
 #
 
 export DEBIAN_FRONTEND=noninteractive
-PKG_NAME="aws-go"
-BASH_COMPLETION_FILE="aws_go.sh"
+PKG_NAME="nephele"
+BASH_COMPLETION_FILE="nephele.sh"
 DEST_PATH="/usr/local/bin"
 BASH_COMPLETION_PATH="/etc/bash_completion.d"
 
@@ -76,8 +76,8 @@ setup() {
 	fi
 
     # Get the latest release from the repository
-	LATEST=$(curl -s https://api.github.com/repos/bharath-srinivas/aws-go/tags | grep name  | head -n 1 | sed 's/[," ]//g' | cut -d ':' -f 2)
-	URL="https://github.com/bharath-srinivas/aws-go/releases/download/$LATEST/aws_go_$PLATFORM"
+	LATEST=$(curl -s https://api.github.com/repos/bharath-srinivas/nephele/tags | grep name  | head -n 1 | sed 's/[," ]//g' | cut -d ':' -f 2)
+	URL="https://github.com/bharath-srinivas/nephele/releases/download/$LATEST/nephele_$PLATFORM"
 
 	if [ -z "$LATEST" ]; then
 	    echo
@@ -87,10 +87,10 @@ setup() {
 		print_status "Downloading ${PKG_NAME} binary onto your system. Please wait..."
 		if [ -x /usr/bin/curl ]; then
 			exec_cmd "curl -#Lf -o ${DEST_PATH}/${PKG_NAME} ${URL}"
-			exec_cmd "curl -sLf -o ${BASH_COMPLETION_PATH}/${BASH_COMPLETION_FILE} https://raw.githubusercontent.com/bharath-srinivas/aws-go/master/${BASH_COMPLETION_FILE}"
+			exec_cmd "curl -sLf -o ${BASH_COMPLETION_PATH}/${BASH_COMPLETION_FILE} https://raw.githubusercontent.com/bharath-srinivas/nephele/master/${BASH_COMPLETION_FILE}"
 		else
 			exec_cmd "wget -q -P ${DEST_PATH} ${URL}"
-			exec_cmd "wget -q -P ${BASH_COMPLETION_PATH} https://raw.githubusercontent.com/bharath-srinivas/aws-go/master/${BASH_COMPLETION_FILE}"
+			exec_cmd "wget -q -P ${BASH_COMPLETION_PATH} https://raw.githubusercontent.com/bharath-srinivas/nephele/master/${BASH_COMPLETION_FILE}"
 		fi
 		print_status "Setting appropriate permissions for ${PKG_NAME} to work properly..."
 		exec_cmd "chmod +x ${DEST_PATH}/${PKG_NAME}"

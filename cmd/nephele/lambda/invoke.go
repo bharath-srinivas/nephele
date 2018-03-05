@@ -7,9 +7,9 @@ import (
 	"github.com/aws/aws-sdk-go/service/lambda"
 	"github.com/spf13/cobra"
 
-	"github.com/bharath-srinivas/aws-go/cmd/aws-go/command"
-	"github.com/bharath-srinivas/aws-go/function"
-	"github.com/bharath-srinivas/aws-go/internal/spinner"
+	"github.com/bharath-srinivas/nephele/cmd/nephele/command"
+	"github.com/bharath-srinivas/nephele/function"
+	"github.com/bharath-srinivas/nephele/internal/spinner"
 )
 
 // lambda invoke command.
@@ -20,7 +20,7 @@ var invokeLambdaCmd = &cobra.Command{
 It's important to note that invoke command invokes the $LATEST version of the lambda function
 available with RequestResponse invocation type`,
 	Args:    cobra.ExactArgs(1),
-	Example: "  aws-go lambda invoke testLambdaFunction",
+	Example: "  nephele lambda invoke testLambdaFunction",
 	PreRun:  command.PreRun,
 	RunE:    invokeFunction,
 }

@@ -11,9 +11,9 @@ import (
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 
-	"github.com/bharath-srinivas/aws-go/cmd/aws-go/command"
-	"github.com/bharath-srinivas/aws-go/function"
-	"github.com/bharath-srinivas/aws-go/internal/spinner"
+	"github.com/bharath-srinivas/nephele/cmd/nephele/command"
+	"github.com/bharath-srinivas/nephele/function"
+	"github.com/bharath-srinivas/nephele/internal/spinner"
 )
 
 // continuation token for the bucket.
@@ -31,16 +31,16 @@ var listCmd = &cobra.Command{
 	Short: "List all the available S3 buckets or objects in a bucket",
 	Args:  cobra.MaximumNArgs(1),
 	Example: `To list S3 buckets:  
-  aws-go s3 list
+  nephele s3 list
 
 To list S3 objects in a bucket:
-  aws-go s3 list [bucket-name]
+  nephele s3 list [bucket-name]
 
 For fetching more objects than the default limit:
-  aws-go s3 list [bucket-name] -c <count>
+  nephele s3 list [bucket-name] -c <count>
 
 For fetching the next set of objects in a bucket:
-  aws-go s3 list [bucket-name] -t <token>
+  nephele s3 list [bucket-name] -t <token>
 
 Note: Maximum number of objects you can fetch per request is limited to 1000`,
 	PreRun: command.PreRun,

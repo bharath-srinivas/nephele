@@ -8,9 +8,9 @@ import (
 	"github.com/aws/aws-sdk-go/service/lambda"
 	"github.com/spf13/cobra"
 
-	"github.com/bharath-srinivas/aws-go/cmd/aws-go/command"
-	"github.com/bharath-srinivas/aws-go/function"
-	"github.com/bharath-srinivas/aws-go/internal/spinner"
+	"github.com/bharath-srinivas/nephele/cmd/nephele/command"
+	"github.com/bharath-srinivas/nephele/function"
+	"github.com/bharath-srinivas/nephele/internal/spinner"
 )
 
 // lambda list command.
@@ -18,7 +18,7 @@ var listLambdaCmd = &cobra.Command{
 	Use:     "list",
 	Short:   "List all available AWS Lambda functions and their configurations",
 	Args:    cobra.NoArgs,
-	Example: "  aws-go lambda list",
+	Example: "  nephele lambda list",
 	PreRun:  command.PreRun,
 	RunE:    listFunctions,
 }

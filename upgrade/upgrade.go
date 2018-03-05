@@ -1,4 +1,4 @@
-// Package upgrade downloads the latest binary of aws-go and installs it to the system.
+// Package upgrade downloads the latest binary of nephele and installs it to the system.
 package upgrade
 
 import (
@@ -16,14 +16,14 @@ import (
 
 	"github.com/google/go-github/github"
 
-	"github.com/bharath-srinivas/aws-go/utils"
+	"github.com/bharath-srinivas/nephele/utils"
 )
 
-// Upgrade checks for latest version of aws-go and downloads the latest version for the current platform, if available.
+// Upgrade checks for latest version of nephele and downloads the latest version for the current platform, if available.
 func Upgrade(version string) error {
 	gitClient := github.NewClient(nil)
-	releases, _, err := gitClient.Repositories.ListReleases(context.Background(), "bharath-srinivas", "aws-go", nil)
-	autoCompScript, _, _, err := gitClient.Repositories.GetContents(context.Background(), "bharath-srinivas", "aws-go", "aws_go.sh", nil)
+	releases, _, err := gitClient.Repositories.ListReleases(context.Background(), "bharath-srinivas", "nephele", nil)
+	autoCompScript, _, _, err := gitClient.Repositories.GetContents(context.Background(), "bharath-srinivas", "nephele", "nephele.sh", nil)
 
 	if err != nil {
 		return err
@@ -33,7 +33,7 @@ func Upgrade(version string) error {
 	latestAutoCompScript := *autoCompScript.DownloadURL
 
 	if *latestRelease.TagName == version {
-		fmt.Println("aws-go is already up to date")
+		fmt.Println("nephele is already up to date")
 	} else {
 		reader := bufio.NewReader(os.Stdin)
 		fmt.Printf("A newer version %s is available! View the release notes here: %s\n", *latestRelease.TagName,
@@ -57,7 +57,7 @@ func Upgrade(version string) error {
 	return nil
 }
 
-// downloadRelease downloads the latest version of aws-go for the current platform, if available.
+// downloadRelease downloads the latest version of nephele for the current platform, if available.
 // It will return error, if any.
 func downloadRelease(release *github.RepositoryRelease, autoComp string) error {
 	assetInfo := getAssetInfo(release)
@@ -65,12 +65,12 @@ func downloadRelease(release *github.RepositoryRelease, autoComp string) error {
 		return errors.New("cannot find binary compatible for your system")
 	}
 
-	cmdPath, err := exec.LookPath("aws-go")
+	cmdPath, err := exec.LookPath("nephele")
 	if err != nil {
 		return err
 	}
 
-	scriptPath := filepath.Join("/etc/bash_completion.d", "aws_go.sh")
+	scriptPath := filepath.Join("/etc/bash_completion.d", "nephele.sh")
 	resp, err := http.Get(*assetInfo.BrowserDownloadURL)
 	if err != nil {
 		return err
@@ -83,14 +83,14 @@ func downloadRelease(release *github.RepositoryRelease, autoComp string) error {
 	}
 
 	cmdDir := filepath.Dir(cmdPath)
-	tmpPath := filepath.Join(cmdDir, "aws-go-tmp")
+	tmpPath := filepath.Join(cmdDir, "nephele-tmp")
 	tmpFile, err := os.OpenFile(tmpPath, os.O_CREATE|os.O_RDWR, 0755)
 	if err != nil {
 		return err
 	}
 
 	scriptDir := filepath.Dir(scriptPath)
-	tmpScriptPath := filepath.Join(scriptDir, "aws_go_latest.sh")
+	tmpScriptPath := filepath.Join(scriptDir, "nephele_latest.sh")
 	tmpScriptFile, err := os.OpenFile(tmpScriptPath, os.O_CREATE|os.O_RDWR, 0755)
 	if err != nil {
 		return err
@@ -119,13 +119,13 @@ func downloadRelease(release *github.RepositoryRelease, autoComp string) error {
 		return err
 	}
 
-	fmt.Println("\nVisit https://github.com/bharath-srinivas/aws-go/releases to read the changelog")
+	fmt.Println("\nVisit https://github.com/bharath-srinivas/nephele/releases to read the changelog")
 	return nil
 }
 
 // getAssetInfo returns the asset info related to the current platform.
 func getAssetInfo(release *github.RepositoryRelease) *github.ReleaseAsset {
-	currentBinary := "aws_go_" + runtime.GOOS + "_" + runtime.GOARCH
+	currentBinary := "nephele_" + runtime.GOOS + "_" + runtime.GOARCH
 
 	for _, asset := range release.Assets {
 		if *asset.Name == currentBinary {

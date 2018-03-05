@@ -1,4 +1,4 @@
-// Package env manages the environments for aws-go.
+// Package env manages the environments for nephele.
 package env
 
 import (
@@ -7,9 +7,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/bharath-srinivas/aws-go/cmd/aws-go/command"
-	"github.com/bharath-srinivas/aws-go/internal/colors"
-	"github.com/bharath-srinivas/aws-go/store"
+	"github.com/bharath-srinivas/nephele/cmd/nephele/command"
+	"github.com/bharath-srinivas/nephele/internal/colors"
+	"github.com/bharath-srinivas/nephele/store"
 )
 
 // constant for string color wrapping
@@ -26,8 +26,8 @@ var envCmd = &cobra.Command{
 	Use:   "env",
 	Short: "Manage AWS profile configurations",
 	Args:  cobra.NoArgs,
-	Example: `  aws-go env --list
-  aws-go env --delete staging`,
+	Example: `  nephele env --list
+  nephele env --delete staging`,
 	RunE: run,
 }
 

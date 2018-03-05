@@ -3,17 +3,17 @@ package upgrade
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/bharath-srinivas/aws-go/cmd/aws-go/command"
-	"github.com/bharath-srinivas/aws-go/cmd/aws-go/version"
-	"github.com/bharath-srinivas/aws-go/upgrade"
+	"github.com/bharath-srinivas/nephele/cmd/nephele/command"
+	"github.com/bharath-srinivas/nephele/cmd/nephele/version"
+	"github.com/bharath-srinivas/nephele/upgrade"
 )
 
 // upgrade command.
 var upgradeCmd = &cobra.Command{
 	Use:     "upgrade",
-	Short:   "Upgrade aws-go to the latest version",
+	Short:   "Upgrade nephele to the latest version",
 	Args:    cobra.NoArgs,
-	Example: "  aws-go upgrade",
+	Example: "  nephele upgrade",
 	RunE:    doUpgrade,
 }
 

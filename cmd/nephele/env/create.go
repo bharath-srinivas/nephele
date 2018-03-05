@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/bharath-srinivas/aws-go/store"
+	"github.com/bharath-srinivas/nephele/store"
 )
 
 // env create command.
@@ -14,7 +14,7 @@ var createCmd = &cobra.Command{
 	Use:     "create",
 	Short:   "Create a new AWS profile with specified region (if provided)",
 	Args:    cobra.NoArgs,
-	Example: "  aws-go env create --profile staging --region us-west-1",
+	Example: "  nephele env create --profile staging --region us-west-1",
 	RunE:    createEnv,
 }
 

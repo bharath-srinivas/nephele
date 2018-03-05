@@ -1,4 +1,4 @@
-# bash completion for aws-go                               -*- shell-script -*-
+# bash completion for nephele                              -*- shell-script -*-
 
 __debug()
 {
@@ -229,9 +229,9 @@ __handle_word()
     __handle_word
 }
 
-_aws-go_ec2_list()
+_nephele_ec2_list()
 {
-    last_command="aws-go_ec2_list"
+    last_command="nephele_ec2_list"
     commands=()
 
     flags=()
@@ -255,9 +255,9 @@ _aws-go_ec2_list()
     noun_aliases=()
 }
 
-_aws-go_ec2_start()
+_nephele_ec2_start()
 {
-    last_command="aws-go_ec2_start"
+    last_command="nephele_ec2_start"
     commands=()
 
     flags=()
@@ -274,9 +274,9 @@ _aws-go_ec2_start()
     noun_aliases=()
 }
 
-_aws-go_ec2_stop()
+_nephele_ec2_stop()
 {
-    last_command="aws-go_ec2_stop"
+    last_command="nephele_ec2_stop"
     commands=()
 
     flags=()
@@ -293,9 +293,9 @@ _aws-go_ec2_stop()
     noun_aliases=()
 }
 
-_aws-go_ec2()
+_nephele_ec2()
 {
-    last_command="aws-go_ec2"
+    last_command="nephele_ec2"
     commands=()
     commands+=("list")
     commands+=("start")
@@ -313,9 +313,9 @@ _aws-go_ec2()
     noun_aliases=()
 }
 
-_aws-go_env_create()
+_nephele_env_create()
 {
-    last_command="aws-go_env_create"
+    last_command="nephele_env_create"
     commands=()
 
     flags=()
@@ -336,9 +336,9 @@ _aws-go_env_create()
     noun_aliases=()
 }
 
-_aws-go_env_use()
+_nephele_env_use()
 {
-    last_command="aws-go_env_use"
+    last_command="nephele_env_use"
     commands=()
 
     flags=()
@@ -359,9 +359,9 @@ _aws-go_env_use()
     noun_aliases=()
 }
 
-_aws-go_env()
+_nephele_env()
 {
-    last_command="aws-go_env"
+    last_command="nephele_env"
     commands=()
     commands+=("create")
     commands+=("use")
@@ -384,9 +384,9 @@ _aws-go_env()
     noun_aliases=()
 }
 
-_aws-go_lambda_invoke()
+_nephele_lambda_invoke()
 {
-    last_command="aws-go_lambda_invoke"
+    last_command="nephele_lambda_invoke"
     commands=()
 
     flags=()
@@ -401,9 +401,9 @@ _aws-go_lambda_invoke()
     noun_aliases=()
 }
 
-_aws-go_lambda_list()
+_nephele_lambda_list()
 {
-    last_command="aws-go_lambda_list"
+    last_command="nephele_lambda_list"
     commands=()
 
     flags=()
@@ -418,9 +418,9 @@ _aws-go_lambda_list()
     noun_aliases=()
 }
 
-_aws-go_lambda()
+_nephele_lambda()
 {
-    last_command="aws-go_lambda"
+    last_command="nephele_lambda"
     commands=()
     commands+=("invoke")
     commands+=("list")
@@ -437,9 +437,9 @@ _aws-go_lambda()
     noun_aliases=()
 }
 
-_aws-go_rds_list()
+_nephele_rds_list()
 {
-    last_command="aws-go_rds_list"
+    last_command="nephele_rds_list"
     commands=()
 
     flags=()
@@ -454,11 +454,50 @@ _aws-go_rds_list()
     noun_aliases=()
 }
 
-_aws-go_rds()
+_nephele_rds_start()
 {
-    last_command="aws-go_rds"
+    last_command="nephele_rds_start"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
+_nephele_rds_stop()
+{
+    last_command="nephele_rds_stop"
+    commands=()
+
+    flags=()
+    two_word_flags=()
+    local_nonpersistent_flags=()
+    flags_with_completion=()
+    flags_completion=()
+
+    flags+=("--snapshot=")
+    two_word_flags+=("-s")
+    local_nonpersistent_flags+=("--snapshot=")
+
+    must_have_one_flag=()
+    must_have_one_noun=()
+    noun_aliases=()
+}
+
+_nephele_rds()
+{
+    last_command="nephele_rds"
     commands=()
     commands+=("list")
+    commands+=("start")
+    commands+=("stop")
 
     flags=()
     two_word_flags=()
@@ -472,9 +511,9 @@ _aws-go_rds()
     noun_aliases=()
 }
 
-_aws-go_s3_download()
+_nephele_s3_download()
 {
-    last_command="aws-go_s3_download"
+    last_command="nephele_s3_download"
     commands=()
 
     flags=()
@@ -492,9 +531,9 @@ _aws-go_s3_download()
     noun_aliases=()
 }
 
-_aws-go_s3_list()
+_nephele_s3_list()
 {
-    last_command="aws-go_s3_list"
+    last_command="nephele_s3_list"
     commands=()
 
     flags=()
@@ -518,9 +557,9 @@ _aws-go_s3_list()
     noun_aliases=()
 }
 
-_aws-go_s3()
+_nephele_s3()
 {
-    last_command="aws-go_s3"
+    last_command="nephele_s3"
     commands=()
     commands+=("download")
     commands+=("list")
@@ -537,9 +576,9 @@ _aws-go_s3()
     noun_aliases=()
 }
 
-_aws-go_upgrade()
+_nephele_upgrade()
 {
-    last_command="aws-go_upgrade"
+    last_command="nephele_upgrade"
     commands=()
 
     flags=()
@@ -554,9 +593,9 @@ _aws-go_upgrade()
     noun_aliases=()
 }
 
-_aws-go_version()
+_nephele_version()
 {
-    last_command="aws-go_version"
+    last_command="nephele_version"
     commands=()
 
     flags=()
@@ -571,9 +610,9 @@ _aws-go_version()
     noun_aliases=()
 }
 
-_aws-go()
+_nephele()
 {
-    last_command="aws-go"
+    last_command="nephele"
     commands=()
     commands+=("ec2")
     commands+=("env")
@@ -595,7 +634,7 @@ _aws-go()
     noun_aliases=()
 }
 
-__start_aws-go()
+__start_nephele()
 {
     local cur prev words cword
     declare -A flaghash 2>/dev/null || :
@@ -611,7 +650,7 @@ __start_aws-go()
     local local_nonpersistent_flags=()
     local flags_with_completion=()
     local flags_completion=()
-    local commands=("aws-go")
+    local commands=("nephele")
     local must_have_one_flag=()
     local must_have_one_noun=()
     local last_command
@@ -621,9 +660,9 @@ __start_aws-go()
 }
 
 if [[ $(type -t compopt) = "builtin" ]]; then
-    complete -o default -F __start_aws-go aws-go
+    complete -o default -F __start_nephele nephele
 else
-    complete -o default -o nospace -F __start_aws-go aws-go
+    complete -o default -o nospace -F __start_nephele nephele
 fi
 
 # ex: ts=4 sw=4 et filetype=sh

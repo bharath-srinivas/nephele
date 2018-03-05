@@ -6,9 +6,9 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/spf13/cobra"
 
-	"github.com/bharath-srinivas/aws-go/cmd/aws-go/command"
-	"github.com/bharath-srinivas/aws-go/function"
-	"github.com/bharath-srinivas/aws-go/internal/spinner"
+	"github.com/bharath-srinivas/nephele/cmd/nephele/command"
+	"github.com/bharath-srinivas/nephele/function"
+	"github.com/bharath-srinivas/nephele/internal/spinner"
 )
 
 // stop instance command.
@@ -16,7 +16,7 @@ var stopCmd = &cobra.Command{
 	Use:     "stop [instance id]",
 	Short:   "Stop the specified EC2 instance",
 	Args:    cobra.MinimumNArgs(1),
-	Example: "  aws-go stop i-0a12b345c678de",
+	Example: "  nephele stop i-0a12b345c678de",
 	PreRun:  command.PreRun,
 	RunE:    stopInstance,
 }

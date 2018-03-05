@@ -9,9 +9,9 @@ import (
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 
-	"github.com/bharath-srinivas/aws-go/cmd/aws-go/command"
-	"github.com/bharath-srinivas/aws-go/function"
-	"github.com/bharath-srinivas/aws-go/internal/spinner"
+	"github.com/bharath-srinivas/nephele/cmd/nephele/command"
+	"github.com/bharath-srinivas/nephele/function"
+	"github.com/bharath-srinivas/nephele/internal/spinner"
 )
 
 // list filters.
@@ -28,10 +28,10 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all the available EC2 instances",
 	Args:  cobra.NoArgs,
-	Example: `  aws-go ec2 list
-  aws-go ec2 list --filters name=web,az=us-east-1a
-  aws-go ec2 list -F filters.json
-  aws-go ec2 list --all`,
+	Example: `  nephele ec2 list
+  nephele ec2 list --filters name=web,az=us-east-1a
+  nephele ec2 list -F filters.json
+  nephele ec2 list --all`,
 	PreRun: command.PreRun,
 	RunE:   list,
 }

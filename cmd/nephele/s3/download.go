@@ -9,9 +9,9 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/spf13/cobra"
 
-	"github.com/bharath-srinivas/aws-go/cmd/aws-go/command"
-	"github.com/bharath-srinivas/aws-go/function"
-	"github.com/bharath-srinivas/aws-go/internal/spinner"
+	"github.com/bharath-srinivas/nephele/cmd/nephele/command"
+	"github.com/bharath-srinivas/nephele/function"
+	"github.com/bharath-srinivas/nephele/internal/spinner"
 )
 
 // objects file.
@@ -23,13 +23,13 @@ var downloadCmd = &cobra.Command{
 	Short: "Download a S3 object from the specified bucket",
 	Args:  cobra.MaximumNArgs(2),
 	Example: ` To download a S3 object:
-  aws-go s3 download [bucket-name:object-name] [dst-file-name]
+  nephele s3 download [bucket-name:object-name] [dst-file-name]
 
 To download an object from sub directory of a bucket:
-  aws-go s3 download [bucket-name/sub-dir/:object-name] [dst-file-name]
+  nephele s3 download [bucket-name/sub-dir/:object-name] [dst-file-name]
 
 To download multiple objects concurrently:
-  aws-go s3 download -o objects-file.json
+  nephele s3 download -o objects-file.json
 
 Note: Sub-directory name is case-sensitive and requires '/' at the end`,
 	PreRun: command.PreRun,

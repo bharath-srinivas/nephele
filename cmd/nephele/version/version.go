@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"runtime"
 
-	"github.com/bharath-srinivas/aws-go/cmd/aws-go/command"
+	"github.com/bharath-srinivas/nephele/cmd/nephele/command"
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +28,7 @@ func init() {
 
 // run command.
 func printVersion(cmd *cobra.Command, args []string) {
-	fmt.Println("aws-go:")
+	fmt.Println("nephele:")
 	fmt.Println(" version 	:", Version)
 	fmt.Println(" build date	:", buildDate)
 	fmt.Println(" go version	:", runtime.Version())

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/bharath-srinivas/aws-go/internal/colors"
+	"github.com/bharath-srinivas/nephele/internal/colors"
 )
 
 // constants for spinner color wrapping

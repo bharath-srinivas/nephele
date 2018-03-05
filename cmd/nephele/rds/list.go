@@ -7,27 +7,27 @@ import (
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 
-	"github.com/bharath-srinivas/aws-go/cmd/aws-go/command"
-	"github.com/bharath-srinivas/aws-go/function"
-	"github.com/bharath-srinivas/aws-go/internal/spinner"
+	"github.com/bharath-srinivas/nephele/cmd/nephele/command"
+	"github.com/bharath-srinivas/nephele/function"
+	"github.com/bharath-srinivas/nephele/internal/spinner"
 )
 
 // rds list command.
-var listRdsCmd = &cobra.Command{
+var listCmd = &cobra.Command{
 	Use:     "list",
 	Short:   "List all the available AWS RDS instances",
 	Args:    cobra.NoArgs,
-	Example: "  aws-go rds list",
+	Example: "  nephele rds list",
 	PreRun:  command.PreRun,
-	RunE:    listRDSInstances,
+	RunE:    listInstances,
 }
 
 func init() {
-	rdsCmd.AddCommand(listRdsCmd)
+	rdsCmd.AddCommand(listCmd)
 }
 
 // run command.
-func listRDSInstances(cmd *cobra.Command, args []string) error {
+func listInstances(cmd *cobra.Command, args []string) error {
 	sp := spinner.Default(spinner.Prefix[1])
 	sp.Start()
 	sess := rds.New(command.Session)

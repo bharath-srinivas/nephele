@@ -1,4 +1,4 @@
-// Package colors provides colors to aws-go
+// Package colors provides colors to nephele
 package colors
 
 const (

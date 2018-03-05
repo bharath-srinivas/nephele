@@ -36,7 +36,7 @@ type store struct {
 	*sqlx.DB // an instance of sqlx DB
 }
 
-// NewSession creates the config file required by aws-go to function, if not present and creates a new database
+// NewSession creates the config file required by nephele to function, if not present and creates a new database
 // connection and returns a new store.
 func NewSession() *store {
 	usr, _ := user.Current()
@@ -52,7 +52,7 @@ func NewSession() *store {
 		}
 	}
 
-	configFileName := "aws_go.credentials"
+	configFileName := "nephele.credentials"
 	configFile := path.Join(configPath, configFileName)
 
 	return &store{
@@ -88,7 +88,7 @@ func newTest() *store {
 		}
 	}
 
-	configFileName := "aws_go_test.credentials"
+	configFileName := "nephele_test.credentials"
 	configFile := path.Join(configPath, configFileName)
 
 	return &store{
@@ -103,7 +103,7 @@ func cleanup() error {
 
 	configPath := path.Join(homePath, ".aws")
 
-	configFileName := "aws_go_test.credentials"
+	configFileName := "nephele_test.credentials"
 	configFile := path.Join(configPath, configFileName)
 	return os.Remove(configFile)
 }
