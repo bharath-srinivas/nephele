@@ -12,10 +12,10 @@ import (
 	"github.com/aws/aws-sdk-go/service/rds"
 	"github.com/aws/aws-sdk-go/service/s3"
 
-	"github.com/bharath-srinivas/aws-go/mock/ec2"
-	"github.com/bharath-srinivas/aws-go/mock/lambda"
-	"github.com/bharath-srinivas/aws-go/mock/rds"
-	"github.com/bharath-srinivas/aws-go/mock/s3"
+	"github.com/bharath-srinivas/nephele/mock/ec2"
+	"github.com/bharath-srinivas/nephele/mock/lambda"
+	"github.com/bharath-srinivas/nephele/mock/rds"
+	"github.com/bharath-srinivas/nephele/mock/s3"
 )
 
 func TestNewSession(t *testing.T) {
@@ -263,6 +263,56 @@ func TestRDSService_GetRDSInstances(t *testing.T) {
 	if reflect.TypeOf(out).String() != "[][]string" {
 		t.Fail()
 	} else if err != nil {
+		t.Fail()
+	}
+}
+
+func TestRDSService_StartInstance(t *testing.T) {
+	mockController := gomock.NewController(t)
+	defer mockController.Finish()
+
+	rdsServiceMock := mock_rdsiface.NewMockRDSAPI(mockController)
+	params := &rds.StartDBInstanceInput{
+		DBInstanceIdentifier: aws.String("test-rds-instance"),
+	}
+	rdsServiceMock.EXPECT().StartDBInstance(params).Return(&rds.StartDBInstanceOutput{}, nil)
+
+	rdsInput := RDS{
+		ID: "test-rds-instance",
+	}
+
+	rdsService := &RDSService{
+		RDS:     rdsInput,
+		Service: rdsServiceMock,
+	}
+
+	if _, err := rdsService.StartInstance(); err != nil {
+		t.Fail()
+	}
+}
+
+func TestRDSService_StopInstance(t *testing.T) {
+	mockController := gomock.NewController(t)
+	defer mockController.Finish()
+
+	rdsServiceMock := mock_rdsiface.NewMockRDSAPI(mockController)
+	params := &rds.StopDBInstanceInput{
+		DBInstanceIdentifier: aws.String("test-rds-instance"),
+		DBSnapshotIdentifier: aws.String("test-rds-instance-snapshot"),
+	}
+	rdsServiceMock.EXPECT().StopDBInstance(params).Return(&rds.StopDBInstanceOutput{}, nil)
+
+	rdsInput := RDS{
+		ID: "test-rds-instance",
+		SnapShotID: "test-rds-instance-snapshot",
+	}
+
+	rdsService := &RDSService{
+		RDS:     rdsInput,
+		Service: rdsServiceMock,
+	}
+
+	if _, err := rdsService.StopInstance(); err != nil {
 		t.Fail()
 	}
 }

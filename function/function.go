@@ -1,4 +1,4 @@
-// Package function contains the core functions of aws-go.
+// Package function contains the core functions of nephele.
 package function
 
 import (
@@ -23,8 +23,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager/s3manageriface"
 
-	"github.com/bharath-srinivas/aws-go/store"
-	"github.com/bharath-srinivas/aws-go/utils"
+	"github.com/bharath-srinivas/nephele/store"
+	"github.com/bharath-srinivas/nephele/utils"
 )
 
 // Invocation type for invoking the Lambda function.
@@ -62,8 +62,14 @@ type LambdaService struct {
 	Service lambdaiface.LambdaAPI
 }
 
+type RDS struct {
+	ID         string // RDS instance ID
+	SnapShotID string // RDS snapshot ID
+}
+
 // RDSService represents the RDS interface.
 type RDSService struct {
+	RDS
 	Service rdsiface.RDSAPI
 }
 
@@ -135,7 +141,6 @@ func (e *EC2Service) SetFilters(filters []string) error {
 
 		e.Filters = append(e.Filters, &filterList)
 	}
-
 	return nil
 }
 
@@ -168,7 +173,6 @@ func (e *EC2Service) LoadFiltersFromFile(filtersFile string) error {
 			filter.Values = append(filter.Values, &valueTitle, &valueLower)
 		}
 	}
-
 	return nil
 }
 
@@ -213,7 +217,7 @@ func (e *EC2Service) GetInstances() ([][]string, error) {
 	return result, nil
 }
 
-// StartInstances starts the specified instance and returns the state change information of that instance.
+// StartInstances starts the specified instance(s) and returns the state change information of each instance.
 func (e *EC2Service) StartInstances(dryRun bool) (*ec2.StartInstancesOutput, error) {
 	var instanceIds []*string
 	for _, id := range e.IDs {
@@ -227,7 +231,7 @@ func (e *EC2Service) StartInstances(dryRun bool) (*ec2.StartInstancesOutput, err
 	return e.Service.StartInstances(params)
 }
 
-// StopInstances stops the specified instance and returns the state change information of that instance.
+// StopInstances stops the specified instance(s) and returns the state change information of each instance.
 func (e *EC2Service) StopInstances(dryRun bool) (*ec2.StopInstancesOutput, error) {
 	var instanceIds []*string
 	for _, id := range e.IDs {
@@ -253,7 +257,6 @@ func (l *LambdaService) InvokeFunction() (*lambda.InvokeOutput, error) {
 		FunctionName:   aws.String(l.Name),
 		InvocationType: aws.String(InvocationType),
 	}
-
 	return l.Service.Invoke(params)
 }
 
@@ -285,6 +288,26 @@ func (r *RDSService) GetRDSInstances() ([][]string, error) {
 		result = append(result, rdsList)
 	}
 	return result, nil
+}
+
+// StartInstance starts the specified RDS instance and returns the state change information of that instance.
+func (r *RDSService) StartInstance() (*rds.StartDBInstanceOutput, error) {
+	params := &rds.StartDBInstanceInput{
+		DBInstanceIdentifier: aws.String(r.ID),
+	}
+	return r.Service.StartDBInstance(params)
+}
+
+// StopInstance stops the specified RDS instance and returns the state change information of that instance.
+func (r *RDSService) StopInstance() (*rds.StopDBInstanceOutput, error) {
+	params := &rds.StopDBInstanceInput{
+		DBInstanceIdentifier: aws.String(r.ID),
+	}
+
+	if r.SnapShotID != "" {
+		params.DBSnapshotIdentifier = aws.String(r.SnapShotID)
+	}
+	return r.Service.StopDBInstance(params)
 }
 
 // GetBuckets returns the list of all the S3 buckets.
