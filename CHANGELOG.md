@@ -1,3 +1,10 @@
+# v0.5.0 (2018-03-06)
+
+* Project name has been officially changed from aws-go to nephele [**Breaking change**]
+* added functionality to start/stop rds instance
+* added color highlighting for instance states. Closes #3
+* refactored: project name from aws-go to nephele
+
 # v0.4.0 (2018-03-03)
 
 * added functionality to list s3 objects

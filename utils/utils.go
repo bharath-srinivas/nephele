@@ -15,6 +15,24 @@ const (
 	reset  = 0
 )
 
+// ColorString wraps the provided string with appropriate color according to its state and returns the colored string.
+// It should be used only for highlighting instance states and not recommended for any other purpose.
+func ColorString(str string) string {
+	var prefix, suffix string
+	if str == "running" || str == "available" {
+		prefix = fmt.Sprintf("%s[%dm", escape, colors.Green)
+		suffix = fmt.Sprintf("%s[%dm", escape, reset)
+		return prefix + str + suffix
+	} else if str == "stopped" {
+		prefix = fmt.Sprintf("%s[%dm", escape, colors.Red)
+		suffix = fmt.Sprintf("%s[%dm", escape, reset)
+		return prefix + str + suffix
+	}
+	prefix = fmt.Sprintf("%s[%dm", escape, colors.Yellow)
+	suffix = fmt.Sprintf("%s[%dm", escape, reset)
+	return prefix + str + suffix
+}
+
 // GetProgressBar returns an instance of ProgressBar with predefined config.
 func GetProgressBar(totalSize int) *pb.ProgressBar {
 	progressBar := pb.New(totalSize).SetUnits(pb.U_BYTES)
@@ -64,22 +82,4 @@ func hasSeparator(s string) bool {
 		}
 	}
 	return false
-}
-
-// ColorString wraps the provided string with appropriate color according to its state and returns the colored string.
-// It should be used only for highlighting instance states and not recommended for any other purpose.
-func ColorString(str string) string {
-	var prefix, suffix string
-	if str == "running" || str == "available" {
-		prefix = fmt.Sprintf("%s[%dm", escape, colors.Green)
-		suffix = fmt.Sprintf("%s[%dm", escape, reset)
-		return prefix + str + suffix
-	} else if str == "stopped" {
-		prefix = fmt.Sprintf("%s[%dm", escape, colors.Red)
-		suffix = fmt.Sprintf("%s[%dm", escape, reset)
-		return prefix + str + suffix
-	}
-	prefix = fmt.Sprintf("%s[%dm", escape, colors.Yellow)
-	suffix = fmt.Sprintf("%s[%dm", escape, reset)
-	return prefix + str + suffix
 }
