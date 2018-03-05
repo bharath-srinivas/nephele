@@ -210,6 +210,7 @@ func (e *EC2Service) GetInstances() ([][]string, error) {
 				publicIP = *t.PublicIpAddress
 			}
 
+			*t.State.Name = utils.ColorString(*t.State.Name)
 			ec2List = append(ec2List, *t.InstanceId, *t.State.Name, *t.PrivateIpAddress, publicIP, *t.InstanceType)
 			result = append(result, ec2List)
 		}
@@ -282,6 +283,7 @@ func (r *RDSService) GetRDSInstances() ([][]string, error) {
 
 		engineInfo := *instance.Engine + "/" + *instance.EngineVersion
 
+		*instance.DBInstanceStatus = utils.ColorString(*instance.DBInstanceStatus)
 		rdsList = append(rdsList, dbInstanceID, *instance.DBInstanceStatus, endpoint, *instance.DBInstanceClass,
 			engineInfo, strconv.FormatBool(*instance.MultiAZ))
 

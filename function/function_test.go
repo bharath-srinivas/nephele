@@ -303,7 +303,7 @@ func TestRDSService_StopInstance(t *testing.T) {
 	rdsServiceMock.EXPECT().StopDBInstance(params).Return(&rds.StopDBInstanceOutput{}, nil)
 
 	rdsInput := RDS{
-		ID: "test-rds-instance",
+		ID:         "test-rds-instance",
 		SnapShotID: "test-rds-instance-snapshot",
 	}
 

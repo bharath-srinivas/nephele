@@ -35,3 +35,18 @@ for-testing-the-word-wrap-function`; got != want {
 		t.Errorf("WordWrap returned incorrect output, got: %s, want: %s", got, want)
 	}
 }
+
+func TestColorString(t *testing.T) {
+	inputs := map[string]string{
+		"running":   "\x1b[32mrunning\x1b[0m",
+		"available": "\x1b[32mavailable\x1b[0m",
+		"stopped":   "\x1b[31mstopped\x1b[0m",
+		"pending":   "\x1b[33mpending\x1b[0m",
+	}
+
+	for input, want := range inputs {
+		if got := ColorString(input); got != want {
+			t.Errorf("ColorString returned incorrect output, got: %s, want: %s", got, want)
+		}
+	}
+}
