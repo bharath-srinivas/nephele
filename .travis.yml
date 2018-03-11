@@ -16,3 +16,7 @@ script:
   - test -z $(gofmt -s -l $GO_FILES)
   - go test -v -race ./...
   - go vet ./...
+  - make build
+
+deploy:
+  skip_cleanup: true
