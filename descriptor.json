@@ -20,7 +20,7 @@
 
   "files":
   [
-    {"includePattern": "TRAVIS_BUILD_DIR/nephele_linux_*", "uploadPattern": ""}
+    {"includePattern": "nephele_linux_*"}
   ],
   "publish": false
 }
