@@ -15,16 +15,12 @@
   },
 
   "version": {
-    "name": "0.5.1",
-    "desc": "nephele version",
-    "released": "2018-03-11",
-    "vcs_tag": "0.5.1",
-    "gpgSign": false
+    "name": "0.5.1"
   },
 
   "files":
   [
-    {"includePattern": "./nephele_linux_*", "uploadPattern": ""}
+    {"includePattern": "TRAVIS_BUILD_DIR/nephele_linux_*", "uploadPattern": ""}
   ],
   "publish": false
 }

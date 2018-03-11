@@ -1,18 +1,26 @@
 language: go
+
 go:
-- 1.8.x
-- 1.9.x
-- 1.10.x
-- tip
+  - 1.8.x
+  - 1.9.x
+  - 1.10.x
+  - tip
+
 install: true
+
 before_script:
-- GO_FILES=$(find . -iname '*.go' -type f | grep -v /vendor/)
-- go get -t ./...
+  - GO_FILES=$(find . -iname '*.go' -type f | grep -v /vendor/)
+  - go get -t ./...
+
 script:
-- test -z $(gofmt -s -l $GO_FILES)
-- go test -v -race ./...
-- go vet ./...
-- make linux
+  - test -z $(gofmt -s -l $GO_FILES)
+  - go test -v -race ./...
+  - go vet ./...
+  - make linux
+
+after_script:
+  - ls
+
 deploy:
   provider: bintray
   file: "./descriptor.json"
@@ -23,5 +31,3 @@ deploy:
 #  skip_cleanup: true
   on:
     branch: build-mac
-#    tags: true
-
