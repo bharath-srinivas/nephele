@@ -18,9 +18,6 @@ script:
   - go vet ./...
   - make linux
 
-after_script:
-  - ls
-
 deploy:
   provider: bintray
   file: "./descriptor.json"
