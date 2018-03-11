@@ -64,6 +64,7 @@ func (s *Spinner) Start() {
 				case <-s.stop:
 					return
 				default:
+					fmt.Printf("%s[?25l", escape)
 					fmt.Printf("%s%s \r", s.Prefix, s.color(s.spinner[i]))
 					time.Sleep(s.Delay)
 				}
@@ -77,6 +78,7 @@ func (s *Spinner) Stop() {
 	if s.active {
 		s.active = false
 		s.stop <- true
+		fmt.Printf("%s[?25h\r", escape)
 	}
 }
 
