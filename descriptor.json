@@ -1,9 +1,9 @@
 {
   "package": {
     "name": "nephele",
-    "repo": "Nephele",
+    "repo": "nephele",
     "subject": "bharath",
-    "vcs_url": "https://github.com/bharath-srinivas/nephele",
+    "vcs_url": "https://github.com/bharath-srinivas/nephele.git",
     "licenses": ["MIT"]
   },
 
