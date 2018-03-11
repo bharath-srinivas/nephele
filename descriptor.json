@@ -20,7 +20,7 @@
 
   "files":
   [
-    {"includePattern": "nephele_linux_*"}
+    {"includePattern": "\./nephele_linux_amd64"}
   ],
   "publish": false
 }
