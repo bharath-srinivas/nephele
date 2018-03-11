@@ -1,24 +1,27 @@
 language: go
-
 go:
-  - 1.8.x
-  - 1.9.x
-  - 1.10.x
-  - tip
-
+- 1.8.x
+- 1.9.x
+- 1.10.x
+- tip
 install: true
-
 before_script:
-  - GO_FILES=$(find . -iname '*.go' -type f | grep -v /vendor/)
-  - go get -t ./...
-
+- GO_FILES=$(find . -iname '*.go' -type f | grep -v /vendor/)
+- go get -t ./...
 script:
-  - test -z $(gofmt -s -l $GO_FILES)
-  - go test -v -race ./...
-  - go vet ./...
-  - make linux
-
+- test -z $(gofmt -s -l $GO_FILES)
+- go test -v -race ./...
+- go vet ./...
+- make linux
 deploy:
-  skip_cleanup: true
+  provide: bintray
+  file: "./descriptor.json"
+  user: "bharath"
+  key:
+      secure: CCelqaI8+hq0NrrDoTiqJuSeq7oJnSNOs4E6EMnvQvlDxVCP2OUimd8YBDbp+2Zv0f8O38oO1Uw4ysXKbD9qIVACRItCRw1yNzVz0urN3bWq+JPuySL/tgsyTUqnd69aSZXoxmP46y70nCIWLMKEEZJs6E74ki2WIH7bI5vU0NxoDgwXZIRd6zV7ukC6gReKBqBYK/yGzYLKFwKU53wxAQb0AtFx1cqOo2bPGCLnunv+f7pVRW03H/V5hUEf2gSzPXiF2T+0xVZBkkvs0LRK8ow3bUD49uFCAUV+i6FgudWQRGvA4Rh0T7e5LGukxeVx1yTSchLuDsuFsYqmZCjLLs8A31AJErezeLEC8/YQVcc8wrLN6DFPgLifVO2B8DJ/Jh1zH+yfKqRjEFif4YwOTxp1nwT3ziYDYqu1vyZRByIs5sHkKS6sHqTSiDwTxe4kKxLU5x4LNbuu02XEy1j2M7Rp0DTDzaXONipYM3okfDsmm4ZhRlS+/m97PW/FPWJIVwCHmiVQxv3jGaYs/pzE7HnGA2YEzJrnzrjoCKydRE05jU2Mr5NqZnlMHT5Y1pEJ5WPWB5FMeOgrGx/0csjbaP0Aj2Zr//RecYM1fej1FzAPm/q5W4tDux22UJzOtIlAZfJBVDV2VIM0ugn8C8M7U1/4QgGu/zWNqoqTi/F7RyQ=
+#  dry-run: true
+#  skip_cleanup: true
   on:
     branch: build-mac
+    tags: true
+
