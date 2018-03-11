@@ -14,7 +14,7 @@ script:
 - go vet ./...
 - make linux
 deploy:
-  provide: bintray
+  provider: bintray
   file: "./descriptor.json"
   user: "bharath"
   key:
