@@ -20,3 +20,5 @@ script:
 
 deploy:
   skip_cleanup: true
+  on:
+    branch: build-mac
