@@ -9,10 +9,10 @@ import (
 )
 
 // current version.
-const Version = "v0.5.0"
+const Version = "v0.5.1"
 
 // build date.
-const buildDate = "2018-03-06"
+const buildDate = "2018-03-12"
 
 // version command.
 var versionCmd = &cobra.Command{

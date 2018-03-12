@@ -1,3 +1,7 @@
+# v0.5.1 (2018-03-12)
+
+* added clrscr function to s3 list. Closes #11
+
 # v0.5.0 (2018-03-06)
 
 * Project name has been officially changed from aws-go to nephele [**Breaking change**]
