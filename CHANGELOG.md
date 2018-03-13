@@ -1,3 +1,7 @@
+# v0.5.2 (2018-03-13)
+
+* added binary support for macOS
+
 # v0.5.1 (2018-03-12)
 
 * added clrscr function to s3 list. Closes #11
