@@ -9,9 +9,7 @@ EC2, Lambda, RDS etc.
 
 ## Installation
 
-Currently Nephele is available only for linux and windows. Support for other operating systems will be added later.
-
-On linux run the following command to install nephele:
+On linux and mac, run the following command to install nephele:
 
 ```
 curl -sL https://raw.githubusercontent.com/bharath-srinivas/nephele/master/setup_nephele | sudo -E bash -

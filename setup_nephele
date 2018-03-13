@@ -1,15 +1,5 @@
 #!/bin/bash
 
-# Script to install the Nephelê onto a linux x86_64 System.
-#
-# Run as root or insert `sudo -E` before `bash`:
-#
-# curl -sL https://raw.githubusercontent.com/bharath-srinivas/nephele/master/setup_nephele | bash -
-# or
-# wget -qO- https://raw.githubusercontent.com/bharath-srinivas/nephele/master/setup_nephele | bash -
-#
-
-export DEBIAN_FRONTEND=noninteractive
 PKG_NAME="nephele"
 BASH_COMPLETION_FILE="nephele.sh"
 DEST_PATH="/usr/local/bin"
@@ -39,24 +29,27 @@ exec_cmd() {
 setup() {
 	print_status "Installing ${PKG_NAME} now"
 
+	OS=$(uname)
+	OS_ARCH=$(uname -m)
 	PRE_INSTALL_PKGS=""
 
-	if [ ! -x /usr/bin/curl ] && [ ! -x /usr/bin/wget ]; then
+	if [ ! -x /usr/bin/curl ]; then
 	    PRE_INSTALL_PKGS="${PRE_INSTALL_PKGS} curl"
 	fi
 
-	# Populating Cache
-	print_status "Populating apt-get cache..."
-	exec_cmd 'apt-get update'
-
 	# Install the necessary packages needed for performing the installation operation
 	if [ "${PRE_INSTALL_PKGS}" != "" ]; then
-	    print_status "Installing packages required for setup:${PRE_INSTALL_PKGS}"
-	    exec_cmd "apt-get install -y${PRE_INSTALL_PKGS} > /dev/null 2>&1"
-	fi
+	    if [ "$OS" == "Linux" ]; then
+	        print_status "Populating apt-get cache..."
+	        exec_cmd 'apt-get update'
 
-	OS=$(uname)
-	OS_ARCH=$(uname -m)
+	        print_status "Installing packages required for setup:${PRE_INSTALL_PKGS}"
+	        exec_cmd "apt-get install -y${PRE_INSTALL_PKGS} > /dev/null 2>&1"
+	    else
+	        print_status "Please install '${PRE_INSTALL_PKGS}' and try again"
+	        exit 1
+	    fi
+	fi
 
 	# Verify the operating system and its architecture compatibility before performing the installation operation
 	if [ "$OS" == "Linux" ]; then
@@ -64,6 +57,14 @@ setup() {
             PLATFORM="linux_amd64"
         elif [[ "$OS_ARCH" == "i386" || "$OS_ARCH" == "i686" ]]; then
             PLATFORM="linux_386"
+	    else
+	        echo
+	        echo "Your system architecture: ${OS_ARCH}, is not supported. Exiting now"
+	        exit 1
+		fi
+	elif [ "$OS" == "Darwin" ]; then
+	    if [ "$OS_ARCH" == "x86_64" ]; then
+            PLATFORM="darwin_amd64"
 	    else
 	        echo
 	        echo "Your system architecture: ${OS_ARCH}, is not supported. Exiting now"
@@ -85,15 +86,18 @@ setup() {
 	    exit 1
 	else
 		print_status "Downloading ${PKG_NAME} binary onto your system. Please wait..."
-		if [ -x /usr/bin/curl ]; then
-			exec_cmd "curl -#Lf -o ${DEST_PATH}/${PKG_NAME} ${URL}"
-			exec_cmd "curl -sLf -o ${BASH_COMPLETION_PATH}/${BASH_COMPLETION_FILE} https://raw.githubusercontent.com/bharath-srinivas/nephele/master/${BASH_COMPLETION_FILE}"
-		else
-			exec_cmd "wget -q -P ${DEST_PATH} ${URL}"
-			exec_cmd "wget -q -P ${BASH_COMPLETION_PATH} https://raw.githubusercontent.com/bharath-srinivas/nephele/master/${BASH_COMPLETION_FILE}"
-		fi
+		exec_cmd "curl -#Lf -o ${DEST_PATH}/${PKG_NAME} ${URL}"
 		print_status "Setting appropriate permissions for ${PKG_NAME} to work properly..."
 		exec_cmd "chmod +x ${DEST_PATH}/${PKG_NAME}"
+
+	    if [ "$OS" == "Darwin" ]; then
+		    mkdir -p ${BASH_COMPLETION_PATH}
+		    cat 'if [ -x $(brew –prefix)/etc/bash_completion.d/ ]; then
+		        . $(brew –prefix)/etc/bash_completion.d/
+            fi' >> ~/.bash_profile
+		fi
+
+        exec_cmd "curl -sLf -o ${BASH_COMPLETION_PATH}/${BASH_COMPLETION_FILE} https://raw.githubusercontent.com/bharath-srinivas/nephele/master/${BASH_COMPLETION_FILE}"
 		print_status "Refreshing your terminal session for the changes to take effect..."
 		exec_cmd "source ${BASH_COMPLETION_PATH}/${BASH_COMPLETION_FILE}"
 		echo
