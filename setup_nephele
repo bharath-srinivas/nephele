@@ -92,9 +92,12 @@ setup() {
 
 	    if [ "$OS" == "Darwin" ]; then
 		    mkdir -p ${BASH_COMPLETION_PATH}
-		    cat 'if [ -x $(brew –prefix)/etc/bash_completion.d/ ]; then
-		        . $(brew –prefix)/etc/bash_completion.d/
-            fi' >> ~/.bash_profile
+		    cat <<EOF >> ~/.bash_profile
+
+if [ -x ${BASH_COMPLETION_PATH} ]; then
+    . ${BASH_COMPLETION_PATH}/${BASH_COMPLETION_FILE}
+fi
+EOF
 		fi
 
         exec_cmd "curl -sLf -o ${BASH_COMPLETION_PATH}/${BASH_COMPLETION_FILE} https://raw.githubusercontent.com/bharath-srinivas/nephele/master/${BASH_COMPLETION_FILE}"
